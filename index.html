@@ -280,6 +280,22 @@
   .bar{height:6px;border-radius:999px;background:#eef2f8;overflow:hidden;margin-top:5px}
   .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#6366f1,#a5b4fc)}
 
+  /* ---------- dil seçimi ---------- */
+  .topbar-side{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  .lang-switch{
+    display:inline-flex;align-items:center;gap:2px;padding:3px;
+    border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.75);
+  }
+  .lang-btn{
+    display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;background:transparent;
+    border-radius:8px;padding:4px 9px;font-size:11.5px;font-weight:700;letter-spacing:.03em;
+    color:var(--muted);cursor:pointer;transition:background .13s,color .13s,box-shadow .13s,border-color .13s;
+  }
+  .lang-btn:hover{background:#f1f5f9;color:var(--ink-2)}
+  .lang-btn.on{background:#fff;color:var(--accent-2);border-color:var(--accent-line);box-shadow:0 1px 3px rgba(15,23,42,.1)}
+  .lang-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .flag{display:block;width:21px;height:14px;border-radius:3px;overflow:hidden;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(15,23,42,.14)}
+
   /* ---------- onboarding turu ---------- */
   .tour-root{position:fixed;inset:0;z-index:80;display:none}
   .tour-root.on{display:block}
@@ -399,15 +415,42 @@
     <div class="brand">
       <div class="brand-mark"><svg width="23" height="23"><use href="#i-cpu"/></svg></div>
       <div>
-        <h1>Prosessorun planlaşdırılması</h1>
-        <p>FCFS · SJF · SRTF · Prioritet · Round Robin — interaktiv simulyator</p>
+        <h1 data-i18n="app.title">Prosessorun planlaşdırılması</h1>
+        <p data-i18n="app.subtitle">FCFS · SJF · SRTF · Prioritet · Round Robin — interaktiv simulyator</p>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
+    <div class="topbar-side">
+      <div class="lang-switch" id="langSwitch" role="group" aria-label="Dil / Dil">
+        <button class="lang-btn" type="button" data-lang="az" title="Azərbaycan dili" aria-label="Azərbaycan dili" aria-pressed="true">
+          <span class="flag">
+            <svg viewBox="0 0 60 40" width="21" height="14" aria-hidden="true">
+              <rect width="60" height="13.34" fill="#00b5e2"/>
+              <rect y="13.33" width="60" height="13.34" fill="#ef3340"/>
+              <rect y="26.67" width="60" height="13.33" fill="#509e2f"/>
+              <circle cx="29" cy="20" r="6" fill="#fff"/>
+              <circle cx="30.7" cy="20" r="4.9" fill="#ef3340"/>
+              <rect x="32.1" y="18.6" width="2.8" height="2.8" fill="#fff"/>
+              <rect x="32.1" y="18.6" width="2.8" height="2.8" fill="#fff" transform="rotate(45 33.5 20)"/>
+            </svg>
+          </span>
+          <span class="lang-code">AZ</span>
+        </button>
+        <button class="lang-btn" type="button" data-lang="tr" title="Türkçe" aria-label="Türkçe" aria-pressed="false">
+          <span class="flag">
+            <svg viewBox="0 0 60 40" width="21" height="14" aria-hidden="true">
+              <rect width="60" height="40" fill="#e30a17"/>
+              <circle cx="23" cy="20" r="8" fill="#fff"/>
+              <circle cx="25.4" cy="20" r="6.4" fill="#e30a17"/>
+              <path d="M34.5 16.4 L35.35 18.84 L37.92 18.89 L35.87 20.44 L36.62 22.91 L34.5 21.44 L32.38 22.91 L33.13 20.44 L31.08 18.89 L33.65 18.84 Z" fill="#fff"/>
+            </svg>
+          </span>
+          <span class="lang-code">TR</span>
+        </button>
+      </div>
       <button class="btn btn-sm" id="tourStart" type="button">
-        <svg width="13" height="13"><use href="#i-play"/></svg>Turu izlə
+        <svg width="13" height="13"><use href="#i-play"/></svg><span data-i18n="tour.start">Turu izlə</span>
       </button>
-      <div class="badge"><span class="dot-live"></span>Canlı hesablama</div>
+      <div class="badge"><span class="dot-live"></span><span data-i18n="app.live">Canlı hesablama</span></div>
     </div>
   </header>
 
@@ -416,98 +459,98 @@
       <div class="card-title" style="margin-bottom:15px">
         <span class="ico"><svg width="16" height="16"><use href="#i-sliders"/></svg></span>
         <div>
-          <h2>Giriş parametrləri</h2>
-          <p>Alqoritmi seçin və prosesləri daxil edin</p>
+          <h2 data-i18n="panel.title">Giriş parametrləri</h2>
+          <p data-i18n="panel.sub">Alqoritmi seçin və prosesləri daxil edin</p>
         </div>
       </div>
 
-      <div class="section-label">Alqoritm</div>
+      <div class="section-label" data-i18n="sec.algorithm">Alqoritm</div>
       <div class="alg-grid" id="algGrid">
         <label class="alg">
           <input type="radio" name="alg" value="fcfs" checked>
           <span class="alg-body">
             <svg width="16" height="16"><use href="#i-queue"/></svg>
-            <span><strong>FCFS</strong><span>İlk gələn, ilk icra</span></span>
+            <span><strong>FCFS</strong><span data-i18n="alg.fcfs.desc">İlk gələn, ilk icra</span></span>
           </span>
         </label>
         <label class="alg">
           <input type="radio" name="alg" value="sjf">
           <span class="alg-body">
             <svg width="16" height="16"><use href="#i-short"/></svg>
-            <span><strong>SJF</strong><span>Ən qısa burst əvvəl</span></span>
+            <span><strong>SJF</strong><span data-i18n="alg.sjf.desc">Ən qısa burst əvvəl</span></span>
           </span>
         </label>
         <label class="alg">
           <input type="radio" name="alg" value="srtf">
           <span class="alg-body">
             <svg width="16" height="16"><use href="#i-timer"/></svg>
-            <span><strong>SRTF</strong><span>Preemptive SJF</span></span>
+            <span><strong>SRTF</strong><span data-i18n="alg.srtf.desc">Preemptive SJF</span></span>
           </span>
         </label>
         <label class="alg">
           <input type="radio" name="alg" value="prio">
           <span class="alg-body">
             <svg width="16" height="16"><use href="#i-flag"/></svg>
-            <span><strong>Prioritet</strong><span>Preemptive deyil</span></span>
+            <span><strong data-i18n="alg.prio">Prioritet</strong><span data-i18n="alg.prio.desc">Preemptive deyil</span></span>
           </span>
         </label>
         <label class="alg">
           <input type="radio" name="alg" value="priop">
           <span class="alg-body">
             <svg width="16" height="16"><use href="#i-flag"/></svg>
-            <span><strong>Prioritet</strong><span>Preemptive</span></span>
+            <span><strong data-i18n="alg.priop">Prioritet</strong><span data-i18n="alg.priop.desc">Preemptive</span></span>
           </span>
         </label>
         <label class="alg">
           <input type="radio" name="alg" value="rr">
           <span class="alg-body">
             <svg width="16" height="16"><use href="#i-rot"/></svg>
-            <span><strong>Round Robin</strong><span>Kvantla dairəvi</span></span>
+            <span><strong>Round Robin</strong><span data-i18n="alg.rr.desc">Kvantla dairəvi</span></span>
           </span>
         </label>
       </div>
 
       <div class="field-row hidden" id="quantumField">
-        <label for="quantum">Vaxt kvantı <span class="hint">Round Robin üçün</span></label>
+        <label for="quantum"><span data-i18n="fields.quantum">Vaxt kvantı</span> <span class="hint" data-i18n="fields.quantumHint">Round Robin üçün</span></label>
         <input class="num" id="quantum" type="number" min="1" step="1" value="2">
       </div>
 
-      <div class="section-label">Proseslər <span id="procCount" style="letter-spacing:0;text-transform:none;font-weight:600;color:var(--muted)">0 proses</span></div>
+      <div class="section-label"><span data-i18n="sec.processes">Proseslər</span> <span id="procCount" style="letter-spacing:0;text-transform:none;font-weight:600;color:var(--muted)">0 proses</span></div>
       <table class="proc-table">
         <thead>
           <tr>
-            <th>Proses</th>
-            <th class="num-col">Gəlmə</th>
-            <th class="num-col">Burst</th>
-            <th class="num-col">Prioritet</th>
+            <th data-i18n="th.process">Proses</th>
+            <th class="num-col" data-i18n="th.arrival">Gəlmə</th>
+            <th class="num-col" data-i18n="th.burst">Burst</th>
+            <th class="num-col" data-i18n="th.priority">Prioritet</th>
             <th></th>
           </tr>
         </thead>
         <tbody id="procBody"></tbody>
       </table>
       <button class="btn btn-sm btn-block" id="addProc" type="button">
-        <svg width="14" height="14"><use href="#i-plus"/></svg>Proses əlavə et
+        <svg width="14" height="14"><use href="#i-plus"/></svg><span data-i18n="btn.addProcess">Proses əlavə et</span>
       </button>
 
-      <div class="section-label" style="margin-top:17px">Mühazirə nümunələri</div>
+      <div class="section-label" style="margin-top:17px" data-i18n="sec.presets">Mühazirə nümunələri</div>
       <div class="presets" id="presets">
         <button class="chip" type="button" data-preset="fcfs">FCFS</button>
         <button class="chip" type="button" data-preset="sjf">SJF</button>
         <button class="chip" type="button" data-preset="srtf">SRTF</button>
-        <button class="chip" type="button" data-preset="prio">Prioritet</button>
+        <button class="chip" type="button" data-preset="prio" data-i18n="alg.prio">Prioritet</button>
         <button class="chip" type="button" data-preset="rr">Round Robin</button>
       </div>
 
       <div class="actions">
         <button class="btn btn-primary btn-block" id="runBtn" type="button">
-          <svg width="15" height="15"><use href="#i-play"/></svg>Simulyasiya et
+          <svg width="15" height="15"><use href="#i-play"/></svg><span data-i18n="btn.run">Simulyasiya et</span>
         </button>
         <div class="actions-row">
           <button class="btn" id="resetBtn" type="button">
-            <svg width="14" height="14"><use href="#i-reset"/></svg>Sıfırla
+            <svg width="14" height="14"><use href="#i-reset"/></svg><span data-i18n="btn.reset">Sıfırla</span>
           </button>
           <button class="btn" id="printBtn" type="button">
-            <svg width="14" height="14"><use href="#i-print"/></svg>Çap
+            <svg width="14" height="14"><use href="#i-print"/></svg><span data-i18n="btn.print">Çap</span>
           </button>
         </div>
       </div>
@@ -521,22 +564,22 @@
     <section class="results">
       <div class="summary" id="summaryRow">
         <div class="stat">
-          <div class="stat-top"><span>Orta gözləmə</span><svg width="15" height="15"><use href="#i-clock"/></svg></div>
+          <div class="stat-top"><span data-i18n="stat.wt">Orta gözləmə</span><svg width="15" height="15"><use href="#i-clock"/></svg></div>
           <div class="stat-value" id="avgWt">—</div>
           <div class="stat-sub">Waiting time (WT)</div>
         </div>
         <div class="stat teal">
-          <div class="stat-top"><span>Orta dövriyyə</span><svg width="15" height="15"><use href="#i-repeat"/></svg></div>
+          <div class="stat-top"><span data-i18n="stat.tat">Orta dövriyyə</span><svg width="15" height="15"><use href="#i-repeat"/></svg></div>
           <div class="stat-value" id="avgTat">—</div>
           <div class="stat-sub">Turnaround time (TAT)</div>
         </div>
         <div class="stat amber">
-          <div class="stat-top"><span>Orta cavab</span><svg width="15" height="15"><use href="#i-zap"/></svg></div>
+          <div class="stat-top"><span data-i18n="stat.rt">Orta cavab</span><svg width="15" height="15"><use href="#i-zap"/></svg></div>
           <div class="stat-value" id="avgRt">—</div>
           <div class="stat-sub">Response time (RT)</div>
         </div>
         <div class="stat slate">
-          <div class="stat-top"><span>CPU məşğulluğu</span><svg width="15" height="15"><use href="#i-gauge"/></svg></div>
+          <div class="stat-top"><span data-i18n="stat.cpu">CPU məşğulluğu</span><svg width="15" height="15"><use href="#i-gauge"/></svg></div>
           <div class="stat-value" id="cpuUtil">—</div>
           <div class="stat-sub" id="idleSub">Boş vaxt —</div>
         </div>
@@ -546,26 +589,26 @@
         <div class="card-head">
           <div class="card-title">
             <span class="ico"><svg width="16" height="16"><use href="#i-chart"/></svg></span>
-            <div><h2>İcra qrafiki</h2><p>Gantt diaqramı — proseslərin zaman üzrə sırası</p></div>
+            <div><h2 data-i18n="card.gantt">İcra qrafiki</h2><p data-i18n="card.ganttSub">Gantt diaqramı — proseslərin zaman üzrə sırası</p></div>
           </div>
           <span class="badge" id="algLabel" style="font-weight:600">FCFS</span>
         </div>
         <div id="ganttArea">
-          <div class="gantt-empty">Nəticələri görmək üçün parametrləri daxil edin və «Simulyasiya et» düyməsini basın.</div>
+          <div class="gantt-empty" data-i18n="gantt.empty">Nəticələri görmək üçün parametrləri daxil edin və «Simulyasiya et» düyməsini basın.</div>
         </div>
         <div class="playbar">
           <div class="play-left">
             <button class="btn btn-sm" id="playBtn" type="button" disabled>
               <svg width="13" height="13"><use href="#i-play"/></svg>Addım-addım
             </button>
-            <span class="play-status" id="playStatus">Hazır</span>
+            <span class="play-status" id="playStatus" data-i18n="play.ready">Hazır</span>
           </div>
           <div class="speed">
-            <label for="speed">Sürət</label>
+            <label for="speed" data-i18n="speed.label">Sürət</label>
             <select id="speed">
-              <option value="1000">Yavaş</option>
-              <option value="650" selected>Orta</option>
-              <option value="320">Sürətli</option>
+              <option value="1000" data-i18n="speed.slow">Yavaş</option>
+              <option value="650" selected data-i18n="speed.medium">Orta</option>
+              <option value="320" data-i18n="speed.fast">Sürətli</option>
             </select>
           </div>
         </div>
@@ -575,11 +618,11 @@
         <div class="card-head">
           <div class="card-title">
             <span class="ico soft"><svg width="16" height="16"><use href="#i-list"/></svg></span>
-            <div><h2>İcra sırası</h2><p>Prosessora hansı proses, hansı aralıqda verilib</p></div>
+            <div><h2 data-i18n="card.order">İcra sırası</h2><p data-i18n="card.orderSub">Prosessora hansı proses, hansı aralıqda verilib</p></div>
           </div>
         </div>
         <div class="order" id="orderList">
-          <span class="muted-cell" style="font-size:12px">Hələ hesablama aparılmayıb.</span>
+          <span class="muted-cell" style="font-size:12px" data-i18n="order.empty">Hələ hesablama aparılmayıb.</span>
         </div>
       </div>
 
@@ -587,19 +630,19 @@
         <div class="card-head">
           <div class="card-title">
             <span class="ico soft"><svg width="16" height="16"><use href="#i-table"/></svg></span>
-            <div><h2>Proses göstəriciləri</h2><p>Hər proses üzrə hesablanmış vaxtlar</p></div>
+            <div><h2 data-i18n="card.metrics">Proses göstəriciləri</h2><p data-i18n="card.metricsSub">Hər proses üzrə hesablanmış vaxtlar</p></div>
           </div>
         </div>
         <div class="tbl-wrap">
           <table class="data" id="metricsTable">
             <thead>
               <tr>
-                <th>Proses</th><th>Gəlmə</th><th>Burst</th><th>Başlama</th>
-                <th>Tamamlanma</th><th>Dövriyyə</th><th>Gözləmə</th><th>Cavab</th>
+                <th data-i18n="th.process">Proses</th><th data-i18n="th.arrival">Gəlmə</th><th data-i18n="th.burst">Burst</th><th data-i18n="th.start">Başlama</th>
+                <th data-i18n="th.completion">Tamamlanma</th><th data-i18n="th.turnaround">Dövriyyə</th><th data-i18n="th.waiting">Gözləmə</th><th data-i18n="th.response">Cavab</th>
               </tr>
             </thead>
             <tbody id="metricsBody">
-              <tr><td colspan="8" class="muted-cell" style="text-align:center;padding:22px 10px">Cədvəl simulyasiyadan sonra doldurulacaq.</td></tr>
+              <tr><td colspan="8" class="muted-cell" style="text-align:center;padding:22px 10px" data-i18n="metrics.empty">Cədvəl simulyasiyadan sonra doldurulacaq.</td></tr>
             </tbody>
           </table>
         </div>
@@ -609,27 +652,27 @@
         <div class="card-head">
           <div class="card-title">
             <span class="ico teal"><svg width="16" height="16"><use href="#i-scale"/></svg></span>
-            <div><h2>Alqoritmlərin müqayisəsi</h2><p>Eyni proseslər üzərində orta göstəricilər</p></div>
+            <div><h2 data-i18n="card.cmp">Alqoritmlərin müqayisəsi</h2><p data-i18n="card.cmpSub">Eyni proseslər üzərində orta göstəricilər</p></div>
           </div>
         </div>
         <div class="tbl-wrap">
           <table class="data" id="cmpTable">
             <thead>
-              <tr><th>Alqoritm</th><th>Orta WT</th><th>Orta TAT</th><th>Orta RT</th><th class="bar-cell" style="text-align:left">Gözləmə müqayisəsi</th></tr>
+              <tr><th data-i18n="cmp.thAlg">Alqoritm</th><th data-i18n="cmp.avgWt">Orta WT</th><th data-i18n="cmp.avgTat">Orta TAT</th><th data-i18n="cmp.avgRt">Orta RT</th><th class="bar-cell" style="text-align:left" data-i18n="cmp.compareBar">Gözləmə müqayisəsi</th></tr>
             </thead>
             <tbody id="cmpBody">
-              <tr><td colspan="5" class="muted-cell" style="text-align:center;padding:22px 10px">Müqayisə üçün prosesləri daxil edin.</td></tr>
+              <tr><td colspan="5" class="muted-cell" style="text-align:center;padding:22px 10px" data-i18n="cmp.empty">Müqayisə üçün prosesləri daxil edin.</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="cmp-note" id="cmpNote">Prioritet alqoritmlərində kiçik ədəd yüksək prioritet sayılır. Round Robin müqayisəsində yuxarıda seçilmiş vaxt kvantı istifadə olunur; kvant bitdiyi anda gələn proses növbəyə cari prosesdən əvvəl qoyulur. Cədvəldəki sətrə klikləməklə həmin alqoritmlə hesablaya bilərsiniz.</p>
+        <p class="cmp-note" id="cmpNote" data-i18n="cmp.note">Prioritet alqoritmlərində kiçik ədəd yüksək prioritet sayılır. Round Robin müqayisəsində yuxarıda seçilmiş vaxt kvantı istifadə olunur; kvant bitdiyi anda gələn proses növbəyə cari prosesdən əvvəl qoyulur. Cədvəldəki sətrə klikləməklə həmin alqoritmlə hesablaya bilərsiniz.</p>
       </div>
     </section>
   </main>
 
   <footer>
-    <span>Mənbə: <b>Mühazirə 8 — Prosessorun planlaşdırılması</b></span>
-    <span>Boş vaxtlar boz rənglə göstərilir · Vaxt vahidləri şərtidir</span>
+    <span><span data-i18n="footer.sourceLabel">Mənbə:</span> <b data-i18n="footer.sourceValue">Mühazirə 8 — Prosessorun planlaşdırılması</b></span>
+    <span data-i18n="footer.note">Boş vaxtlar boz rənglə göstərilir · Vaxt vahidləri şərtidir</span>
   </footer>
 </div>
 
@@ -638,13 +681,12 @@
   <div class="tour-hole" id="tourHole"></div>
   <div class="tour-tip" id="tourTip" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
     <div class="tour-arrow" id="tourArrow"></div>
-    <button class="tour-x" id="tourClose" type="button" aria-label="Turu bağla">&times;</button>
+    <button class="tour-x" id="tourClose" type="button" data-i18n-aria="tour.close" aria-label="Turu bağla">&times;</button>
     <div class="tour-head">
       <span class="tour-ico"><svg width="15" height="15"><use href="#i-play"/></svg></span>
       <div>
         <h3 id="tourTitle">Başlıq</h3>
-        <p id="tourText">Mətn</p>
-      </div>
+        <p id="tourText">Mətn</p>      </div>
     </div>
     <div class="tour-foot">
       <div class="tour-progress">
@@ -671,14 +713,331 @@
     "#be123c", "#4d7c0f", "#a16207", "#0f766e", "#6d28d9"
   ];
 
-  const ALGS = {
-    fcfs:  { label: "FCFS",            name: "First-Come, First-Served" },
-    sjf:   { label: "SJF",             name: "Shortest-Job-First" },
-    srtf:  { label: "SRTF",            name: "Shortest-Remaining-Time-First" },
-    prio:  { label: "Prioritet",       name: "Prioritet (qeyri-preemptive)" },
-    priop: { label: "Prioritet (P)",   name: "Prioritet (preemptive)" },
-    rr:    { label: "Round Robin",     name: "Round Robin" }
+  /* ---------------- dil / i18n ---------------- */
+
+  const I18N = {
+    az: {
+      "app.docTitle": "Prosessorun planlaşdırılması — Simulyator",
+      "app.title": "Prosessorun planlaşdırılması",
+      "app.subtitle": "FCFS · SJF · SRTF · Prioritet · Round Robin — interaktiv simulyator",
+      "app.live": "Canlı hesablama",
+
+      "alg.fcfs": "FCFS",
+      "alg.sjf": "SJF",
+      "alg.srtf": "SRTF",
+      "alg.prio": "Prioritet",
+      "alg.priop": "Prioritet (P)",
+      "alg.rr": "Round Robin",
+      "alg.fcfs.desc": "İlk gələn, ilk icra",
+      "alg.sjf.desc": "Ən qısa burst əvvəl",
+      "alg.srtf.desc": "Preemptive SJF",
+      "alg.prio.desc": "Preemptive deyil",
+      "alg.priop.desc": "Preemptive",
+      "alg.rr.desc": "Kvantla dairəvi",
+
+      "panel.title": "Giriş parametrləri",
+      "panel.sub": "Alqoritmi seçin və prosesləri daxil edin",
+      "sec.algorithm": "Alqoritm",
+      "sec.processes": "Proseslər",
+      "sec.presets": "Mühazirə nümunələri",
+      "fields.quantum": "Vaxt kvantı",
+      "fields.quantumHint": "Round Robin üçün",
+      "th.process": "Proses",
+      "th.arrival": "Gəlmə",
+      "th.burst": "Burst",
+      "th.priority": "Prioritet",
+      "th.start": "Başlama",
+      "th.completion": "Tamamlanma",
+      "th.turnaround": "Dövriyyə",
+      "th.waiting": "Gözləmə",
+      "th.response": "Cavab",
+      "btn.addProcess": "Proses əlavə et",
+      "btn.run": "Simulyasiya et",
+      "btn.reset": "Sıfırla",
+      "btn.print": "Çap",
+      "count.processes": "{n} proses",
+
+      "stat.wt": "Orta gözləmə",
+      "stat.tat": "Orta dövriyyə",
+      "stat.rt": "Orta cavab",
+      "stat.cpu": "CPU məşğulluğu",
+      "stat.idle": "Boş vaxt {idle} · Ümumi {total}",
+
+      "card.gantt": "İcra qrafiki",
+      "card.ganttSub": "Gantt diaqramı — proseslərin zaman üzrə sırası",
+      "card.order": "İcra sırası",
+      "card.orderSub": "Prosessora hansı proses, hansı aralıqda verilib",
+      "card.metrics": "Proses göstəriciləri",
+      "card.metricsSub": "Hər proses üzrə hesablanmış vaxtlar",
+      "card.cmp": "Alqoritmlərin müqayisəsi",
+      "card.cmpSub": "Eyni proseslər üzərində orta göstəricilər",
+      "cmp.best": "ən yaxşı",
+      "cmp.note": "Prioritet alqoritmlərində kiçik ədəd yüksək prioritet sayılır. Round Robin müqayisəsində yuxarıda seçilmiş vaxt kvantı istifadə olunur; kvant bitdiyi anda gələn proses növbəyə cari prosesdən əvvəl qoyulur. Cədvəldəki sətrə klikləməklə həmin alqoritmlə hesablaya bilərsiniz.",
+      "cmp.title": "Bu alqoritmlə hesabla",
+      "cmp.thAlg": "Alqoritm",
+      "cmp.avgWt": "Orta WT",
+      "cmp.avgTat": "Orta TAT",
+      "cmp.avgRt": "Orta RT",
+      "cmp.compareBar": "Gözləmə müqayisəsi",
+      "metrics.avg": "Orta",
+
+      "play.ready": "Hazır",
+      "play.step": "Addım-addım",
+      "play.stop": "Dayandır",
+      "play.calculated": "{n} seqment · hesablandı",
+      "play.done": "Simulyasiya tamamlandı · {n} seqment",
+      "play.stopped": "Dayandırıldı",
+      "play.inputError": "Girişdə xəta",
+      "play.running": "<b>{id}</b> icra olunur · {start} – {end}",
+      "play.idle": "Prosessor boşdur · {start} – {end}",
+      "speed.label": "Sürət",
+      "speed.slow": "Yavaş",
+      "speed.medium": "Orta",
+      "speed.fast": "Sürətli",
+
+      "gantt.idle": "boş",
+      "order.more": "+{n} seqment",
+      "order.empty": "Hələ hesablama aparılmayıb.",
+      "gantt.empty": "Nəticələri görmək üçün parametrləri daxil edin və «Simulyasiya et» düyməsini basın.",
+      "metrics.empty": "Cədvəl simulyasiyadan sonra doldurulacaq.",
+      "panel.noRows": "Proses yoxdur. «Proses əlavə et» düyməsini basın.",
+      "cmp.empty": "Müqayisə üçün prosesləri daxil edin.",
+
+      "row.delete": "Prosesi sil",
+      "aria.id": "Proses adı",
+      "aria.arrival": "Gəlmə vaxtı",
+      "aria.burst": "Burst vaxtı",
+      "aria.priority": "Prioritet",
+
+      "err.noProcess": "Ən azı bir proses əlavə edin.",
+      "err.emptyId": "Proses adı boş ola bilməz.",
+      "err.dupId": "Proses adları təkrar olunmamalıdır: {id}.",
+      "err.arrival": "«Gəlmə vaxtı» mənfi olmayan tam ədəd olmalıdır ({id}).",
+      "err.burst": "«Burst» 1 və ya daha böyük tam ədəd olmalıdır ({id}).",
+      "err.priority": "«Prioritet» tam ədəd olmalıdır ({id}).",
+      "err.quantum": "Vaxt kvantı 1 və ya daha böyük tam ədəd olmalıdır.",
+      "err.tooLong": "Ümumi icra müddəti 400 vahidi keçməməlidir.",
+
+      "footer.sourceLabel": "Mənbə:",
+      "footer.sourceValue": "Mühazirə 8 — Prosessorun planlaşdırılması",
+      "footer.note": "Boş vaxtlar boz rənglə göstərilir · Vaxt vahidləri şərtidir",
+
+      "tour.start": "Turu izlə",
+      "tour.close": "Turu bağla",
+      "tour.prev": "Geri",
+      "tour.next": "İleri",
+      "tour.finish": "Bitir",
+      "tour.count": "Addım {i} / {n}",
+      "tour.dotLabel": "Addım {i}",
+      "tour.1.t": "Alqoritmi seçin",
+      "tour.1.b": "FCFS, SJF, SRTF, Prioritet (preemptive və qeyri-preemptive) və Round Robin. Round Robin seçiləndə vaxt kvantı sahəsi görünür.",
+      "tour.2.t": "Prosesləri daxil edin",
+      "tour.2.b": "Hər proses üçün ad, gəlmə vaxtı, burst vaxtı və prioritet. «Proses əlavə et» ilə yeni sətir, zibil qutusu ilə silmə.",
+      "tour.3.t": "Mühazirə nümunələri",
+      "tour.3.b": "Dərs 8-dəki hazır nümunələri bir kliklə yükləyin: FCFS, SJF, SRTF, Prioritet və Round Robin.",
+      "tour.4.t": "Simulyasiya et",
+      "tour.4.b": "Seçilmiş alqoritm üzrə icra qrafikini və bütün vaxt göstəricilərini hesablayır. Dəyərləri dəyişəndə nəticə avtomatik yenilənir.",
+      "tour.5.t": "Xülasə göstəriciləri",
+      "tour.5.b": "Orta gözləmə (WT), dövriyyə (TAT) və cavab (RT) vaxtları, həmçinin CPU məşğulluğu faizi.",
+      "tour.6.t": "İcra qrafiki (Gantt diaqramı)",
+      "tour.6.b": "Hansı prosesin hansı zaman aralığında icra olunduğunu göstərir. «Addım-addım» düyməsi və sürət seçimi ilə icranı tək-tək izləyin.",
+      "tour.7.t": "İcra sırası",
+      "tour.7.b": "Prosessora verilən proseslərin ardıcıllığı və vaxt aralıqları. Prosessorun boş qaldığı anlar da burada görünür.",
+      "tour.8.t": "Proses göstəriciləri",
+      "tour.8.b": "Hər proses üçün başlama, tamamlanma, dövriyyə, gözləmə və cavab vaxtı; sonuncu sətirdə orta dəyərlər.",
+      "tour.9.t": "Alqoritmlərin müqayisəsi",
+      "tour.9.b": "Eyni proseslər üzərində bütün alqoritmlərin orta nəticələri və ən yaxşısı. Sətrə klikləyərək həmin alqoritmlə hesablayın.",
+      "tour.10.t": "Turu yenidən izləyin",
+      "tour.10.b": "İstənilən vaxt yuxarıdaki «Turu izlə» düyməsi ilə bu bələdçini təkrar aça bilərsiniz."
+    },
+
+    tr: {
+      "app.docTitle": "İşlemci çizelgelemesi — Simülatör",
+      "app.title": "İşlemci çizelgelemesi",
+      "app.subtitle": "FCFS · SJF · SRTF · Öncelik · Round Robin — etkileşimli simülatör",
+      "app.live": "Canlı hesaplama",
+
+      "alg.fcfs": "FCFS",
+      "alg.sjf": "SJF",
+      "alg.srtf": "SRTF",
+      "alg.prio": "Öncelik",
+      "alg.priop": "Öncelik (P)",
+      "alg.rr": "Round Robin",
+      "alg.fcfs.desc": "İlk gelen, ilk çalışır",
+      "alg.sjf.desc": "En kısa burst önce",
+      "alg.srtf.desc": "Preemptive SJF",
+      "alg.prio.desc": "Preemptive değil",
+      "alg.priop.desc": "Preemptive",
+      "alg.rr.desc": "Kuantumla döner",
+
+      "panel.title": "Girdi parametreleri",
+      "panel.sub": "Algoritmayı seçin ve süreçleri girin",
+      "sec.algorithm": "Algoritma",
+      "sec.processes": "Süreçler",
+      "sec.presets": "Ders örnekleri",
+      "fields.quantum": "Zaman kuantumu",
+      "fields.quantumHint": "Round Robin için",
+      "th.process": "Süreç",
+      "th.arrival": "Varış",
+      "th.burst": "Burst",
+      "th.priority": "Öncelik",
+      "th.start": "Başlama",
+      "th.completion": "Tamamlanma",
+      "th.turnaround": "Geri dönüş",
+      "th.waiting": "Bekleme",
+      "th.response": "Yanıt",
+      "btn.addProcess": "Süreç ekle",
+      "btn.run": "Simülasyonu çalıştır",
+      "btn.reset": "Sıfırla",
+      "btn.print": "Yazdır",
+      "count.processes": "{n} süreç",
+
+      "stat.wt": "Ortalama bekleme",
+      "stat.tat": "Ortalama geri dönüş",
+      "stat.rt": "Ortalama yanıt",
+      "stat.cpu": "CPU kullanımı",
+      "stat.idle": "Boş süre {idle} · Toplam {total}",
+
+      "card.gantt": "İcra çizelgesi",
+      "card.ganttSub": "Gantt diyagramı — süreçlerin zaman sırası",
+      "card.order": "İcra sırası",
+      "card.orderSub": "İşlemciye hangi süreç, hangi aralıkta verildi",
+      "card.metrics": "Süreç göstergeleri",
+      "card.metricsSub": "Her süreç için hesaplanan zamanlar",
+      "card.cmp": "Algoritmaların karşılaştırması",
+      "card.cmpSub": "Aynı süreçler üzerinde ortalama göstergeler",
+      "cmp.best": "en iyi",
+      "cmp.note": "Öncelik algoritmalarında küçük sayı yüksek öncelik sayılır. Round Robin karşılaştırmasında yukarıda seçilen zaman kuantumu kullanılır; kuantumun bittiği anda gelen süreç, kuyruğa çalışan süreçten önce konur. Tablodaki satıra tıklayarak o algoritmayla hesaplayabilirsiniz.",
+      "cmp.title": "Bu algoritmayla hesapla",
+      "cmp.thAlg": "Algoritma",
+      "cmp.avgWt": "Ort. WT",
+      "cmp.avgTat": "Ort. TAT",
+      "cmp.avgRt": "Ort. RT",
+      "cmp.compareBar": "Bekleme karşılaştırması",
+      "metrics.avg": "Ortalama",
+
+      "play.ready": "Hazır",
+      "play.step": "Adım adım",
+      "play.stop": "Durdur",
+      "play.calculated": "{n} bölüm · hesaplandı",
+      "play.done": "Simülasyon tamamlandı · {n} bölüm",
+      "play.stopped": "Durduruldu",
+      "play.inputError": "Girişte hata",
+      "play.running": "<b>{id}</b> çalışıyor · {start} – {end}",
+      "play.idle": "İşlemci boş · {start} – {end}",
+      "speed.label": "Hız",
+      "speed.slow": "Yavaş",
+      "speed.medium": "Orta",
+      "speed.fast": "Hızlı",
+
+      "gantt.idle": "boş",
+      "order.more": "+{n} bölüm",
+      "order.empty": "Henüz hesaplama yapılmadı.",
+      "gantt.empty": "Sonuçları görmek için parametreleri girin ve «Simülasyonu çalıştır» düğmesine basın.",
+      "metrics.empty": "Tablo simülasyondan sonra doldurulacak.",
+      "panel.noRows": "Süreç yok. «Süreç ekle» düğmesine basın.",
+      "cmp.empty": "Karşılaştırma için süreçleri girin.",
+
+      "row.delete": "Süreci sil",
+      "aria.id": "Süreç adı",
+      "aria.arrival": "Varış zamanı",
+      "aria.burst": "Burst zamanı",
+      "aria.priority": "Öncelik",
+
+      "err.noProcess": "En az bir süreç ekleyin.",
+      "err.emptyId": "Süreç adı boş olamaz.",
+      "err.dupId": "Süreç adları tekrar edemez: {id}.",
+      "err.arrival": "«Varış» negatif olmayan tam sayı olmalı ({id}).",
+      "err.burst": "«Burst» 1 veya daha büyük tam sayı olmalı ({id}).",
+      "err.priority": "«Öncelik» tam sayı olmalı ({id}).",
+      "err.quantum": "Zaman kuantumu 1 veya daha büyük tam sayı olmalı.",
+      "err.tooLong": "Toplam icra süresi 400 birimi geçmemeli.",
+
+      "footer.sourceLabel": "Kaynak:",
+      "footer.sourceValue": "Ders 8 — İşlemci çizelgelemesi",
+      "footer.note": "Boş zamanlar gri renkle gösterilir · Zaman birimleri varsayımsaldır",
+
+      "tour.start": "Turu başlat",
+      "tour.close": "Turu kapat",
+      "tour.prev": "Geri",
+      "tour.next": "İleri",
+      "tour.finish": "Bitir",
+      "tour.count": "Adım {i} / {n}",
+      "tour.dotLabel": "Adım {i}",
+      "tour.1.t": "Algoritmayı seçin",
+      "tour.1.b": "FCFS, SJF, SRTF, Öncelik (preemptive ve preemptive olmayan) ve Round Robin. Round Robin seçildiğinde zaman kuantumu alanı görünür.",
+      "tour.2.t": "Süreçleri girin",
+      "tour.2.b": "Her süreç için ad, varış zamanı, burst zamanı ve öncelik. «Süreç ekle» ile yeni satır, çöp kutusu ile silme.",
+      "tour.3.t": "Ders örnekleri",
+      "tour.3.b": "Ders 8'deki hazır örnekleri tek tıkla yükleyin: FCFS, SJF, SRTF, Öncelik ve Round Robin.",
+      "tour.4.t": "Simülasyonu çalıştır",
+      "tour.4.b": "Seçilen algoritmaya göre icra çizelgesini ve tüm zaman göstergelerini hesaplar. Değerleri değiştirdiğinizde sonuç otomatik yenilenir.",
+      "tour.5.t": "Özet göstergeler",
+      "tour.5.b": "Ortalama bekleme (WT), geri dönüş (TAT) ve yanıt (RT) zamanları ile CPU kullanım yüzdesi.",
+      "tour.6.t": "İcra çizelgesi (Gantt diyagramı)",
+      "tour.6.b": "Hangi sürecin hangi zaman aralığında çalıştığını gösterir. «Adım adım» düğmesi ve hız seçimi ile icrayı tek tek izleyin.",
+      "tour.7.t": "İcra sırası",
+      "tour.7.b": "İşlemciye verilen süreçlerin sırası ve zaman aralıkları. İşlemcinin boş kaldığı anlar da burada görünür.",
+      "tour.8.t": "Süreç göstergeleri",
+      "tour.8.b": "Her süreç için başlama, tamamlanma, geri dönüş, bekleme ve yanıt zamanı; son satırda ortalama değerler.",
+      "tour.9.t": "Algoritmaların karşılaştırması",
+      "tour.9.b": "Aynı süreçler üzerinde tüm algoritmaların ortalama sonuçları ve en iyisi. Satıra tıklayarak o algoritmayla hesaplayın.",
+      "tour.10.t": "Turu yeniden izleyin",
+      "tour.10.b": "İstediğiniz zaman yukarıdaki «Turu başlat» düğmesiyle bu rehberi yeniden açabilirsiniz."
+    }
   };
+
+  let lang = "az";
+  try {
+    const saved = window.localStorage.getItem("cpuSimLang");
+    if (saved === "tr" || saved === "az") lang = saved;
+  } catch (e) {
+    /* localStorage əlçatan deyilsə, standart dil qalır */
+  }
+
+  function t(key, vars) {
+    const dict = I18N[lang] || I18N.az;
+    let s = dict[key] !== undefined ? dict[key] : (I18N.az[key] !== undefined ? I18N.az[key] : key);
+    if (vars) {
+      Object.keys(vars).forEach((k) => { s = s.split("{" + k + "}").join(String(vars[k])); });
+    }
+    return s;
+  }
+
+  function applyI18n() {
+    document.documentElement.lang = lang;
+    document.title = t("app.docTitle");
+    document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
+  }
+
+  function updateLangButtons() {
+    document.querySelectorAll("#langSwitch [data-lang]").forEach((btn) => {
+      const on = btn.dataset.lang === lang;
+      btn.classList.toggle("on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  function setLang(next) {
+    lang = next === "tr" ? "tr" : "az";
+    try {
+      window.localStorage.setItem("cpuSimLang", lang);
+    } catch (e) {
+      /* yadda saxlamaq mümkün deyilsə, dil yalnız bu sessiyada dəyişir */
+    }
+    applyI18n();
+    updateLangButtons();
+    renderTable();
+    if (tourActive()) {
+      paintTourLabels();
+      paintTourStep();
+    }
+    setPlayButton(state.playing);
+    run();
+  }
+
+  const ALGS = { fcfs: {}, sjf: {}, srtf: {}, prio: {}, priop: {}, rr: {} };
 
   const state = {
     procs: [],
@@ -886,23 +1245,23 @@
   }
 
   function validate(procs, quantum) {
-    if (procs.length === 0) return "Ən azı bir proses əlavə edin.";
+    if (procs.length === 0) return t("err.noProcess");
     const seen = new Set();
     for (const p of procs) {
-      if (!p.id) return "Proses adı boş ola bilməz.";
-      if (seen.has(p.id)) return "Proses adları təkrar olunmamalıdır: " + p.id + ".";
+      if (!p.id) return t("err.emptyId");
+      if (seen.has(p.id)) return t("err.dupId", { id: p.id });
       seen.add(p.id);
     }
     for (const p of procs) {
-      if (!isInt(p.arrival) || p.arrival < 0) return "«Gəlmə vaxtı» mənfi olmayan tam ədəd olmalıdır (" + p.id + ").";
-      if (!isInt(p.burst) || p.burst < 1) return "«Burst» 1 və ya daha böyük tam ədəd olmalıdır (" + p.id + ").";
-      if (!isInt(p.priority)) return "«Prioritet» tam ədəd olmalıdır (" + p.id + ").";
+      if (!isInt(p.arrival) || p.arrival < 0) return t("err.arrival", { id: p.id });
+      if (!isInt(p.burst) || p.burst < 1) return t("err.burst", { id: p.id });
+      if (!isInt(p.priority)) return t("err.priority", { id: p.id });
     }
     if (state.algorithm === "rr" && (!isInt(quantum) || quantum < 1)) {
-      return "Vaxt kvantı 1 və ya daha böyük tam ədəd olmalıdır.";
+      return t("err.quantum");
     }
     const totalBurst = procs.reduce((s, p) => s + p.burst, 0);
-    if (totalBurst > 400) return "Ümumi icra müddəti 400 vahidi keçməməlidir.";
+    if (totalBurst > 400) return t("err.tooLong");
     return null;
   }
 
@@ -936,23 +1295,23 @@
   function renderTable() {
     const body = $("procBody");
     if (state.procs.length === 0) {
-      body.innerHTML = '<tr><td colspan="5" style="padding:16px 6px;text-align:center;color:var(--muted-2);font-size:12px">Proses yoxdur. «Proses əlavə et» düyməsini basın.</td></tr>';
+      body.innerHTML = '<tr><td colspan="5" style="padding:16px 6px;text-align:center;color:var(--muted-2);font-size:12px">' + esc(t("panel.noRows")) + "</td></tr>";
     } else {
       body.innerHTML = state.procs.map((p, i) =>
         '<tr data-idx="' + i + '">' +
           '<td style="display:flex;align-items:center;gap:5px">' +
             '<span class="row-dot" style="margin:0;background:' + COLORS[i % COLORS.length] + '"></span>' +
-            '<input class="cell-in id" style="flex:1;min-width:0" data-field="id" value="' + esc(p.id) + '" spellcheck="false" aria-label="Proses adı">' +
+            '<input class="cell-in id" style="flex:1;min-width:0" data-field="id" value="' + esc(p.id) + '" spellcheck="false" aria-label="' + esc(t("aria.id")) + '">' +
           '</td>' +
-          '<td><input class="cell-in n" data-field="arrival" type="number" min="0" step="1" value="' + esc(p.arrival) + '" aria-label="Gəlmə vaxtı"></td>' +
-          '<td><input class="cell-in n" data-field="burst" type="number" min="1" step="1" value="' + esc(p.burst) + '" aria-label="Burst"></td>' +
-          '<td><input class="cell-in n" data-field="priority" type="number" step="1" value="' + esc(p.priority) + '" aria-label="Prioritet"></td>' +
-          '<td><button class="row-del" type="button" data-del="' + i + '" title="Prosesi sil" aria-label="Prosesi sil">' +
+          '<td><input class="cell-in n" data-field="arrival" type="number" min="0" step="1" value="' + esc(p.arrival) + '" aria-label="' + esc(t("aria.arrival")) + '"></td>' +
+          '<td><input class="cell-in n" data-field="burst" type="number" min="1" step="1" value="' + esc(p.burst) + '" aria-label="' + esc(t("aria.burst")) + '"></td>' +
+          '<td><input class="cell-in n" data-field="priority" type="number" step="1" value="' + esc(p.priority) + '" aria-label="' + esc(t("aria.priority")) + '"></td>' +
+          '<td><button class="row-del" type="button" data-del="' + i + '" title="' + esc(t("row.delete")) + '" aria-label="' + esc(t("row.delete")) + '">' +
             '<svg width="14" height="14"><use href="#i-trash"/></svg></button></td>' +
         '</tr>'
       ).join("");
     }
-    $("procCount").textContent = state.procs.length + " proses";
+    $("procCount").textContent = t("count.processes", { n: state.procs.length });
   }
 
   function nextId() {
@@ -971,13 +1330,13 @@
     $("avgTat").textContent = fmt(result.avgTat);
     $("avgRt").textContent = fmt(result.avgRt);
     $("cpuUtil").innerHTML = fmt(result.util) + '<span class="stat-unit">%</span>';
-    $("idleSub").textContent = "Boş vaxt " + fmt(result.idle) + " · Ümumi " + fmt(result.total);
+    $("idleSub").textContent = t("stat.idle", { idle: fmt(result.idle), total: fmt(result.total) });
   }
 
   function renderGantt(result, revealCount, activeIndex) {
     const host = $("ganttArea");
     if (!result || !result.segments.length) {
-      host.innerHTML = '<div class="gantt-empty">Nəticələri görmək üçün parametrləri daxil edin və «Simulyasiya et» düyməsini basın.</div>';
+      host.innerHTML = '<div class="gantt-empty">' + esc(t("gantt.empty")) + "</div>";
       return;
     }
 
@@ -996,7 +1355,7 @@
     const colorById = {};
     result.rows.forEach((r) => { colorById[r.id] = r.color; });
 
-    let out = '<svg class="gantt-svg" width="' + width.toFixed(1) + '" height="108" viewBox="0 0 ' + width.toFixed(1) + ' 108" role="img" aria-label="İcra qrafiki">';
+    let out = '<svg class="gantt-svg" width="' + width.toFixed(1) + '" height="108" viewBox="0 0 ' + width.toFixed(1) + ' 108" role="img" aria-label="' + esc(t("card.gantt")) + '">';
     out += '<line x1="0" y1="' + axisY + '" x2="' + width.toFixed(1) + '" y2="' + axisY + '" stroke="#eef2f8" stroke-width="1"/>';
 
     result.segments.slice(0, shown).forEach((seg, i) => {
@@ -1009,12 +1368,12 @@
       out += '<rect x="' + (x + 1).toFixed(2) + '" y="' + barY + '" width="' + Math.max(w - 2, 1.5).toFixed(2) + '" height="' + barH + '" rx="6" fill="' + fill + '"' +
         (active ? ' stroke="#0f172a" stroke-width="1.6"' : "") + "/>";
       if (w >= 30) {
-        const label = idle ? "boş" : seg.pid;
+        const label = idle ? t("gantt.idle") : seg.pid;
         out += '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (barY + barH / 2) + '" text-anchor="middle" dominant-baseline="middle" ' +
           'font-family="Segoe UI, system-ui, sans-serif" font-size="' + (w < 42 ? 10 : 12) + '" font-weight="' + (idle ? 500 : 650) + '" ' +
           'fill="' + (idle ? "#94a3b8" : "#ffffff") + '">' + esc(label) + "</text>";
       } else {
-        out += "<title>" + esc(idle ? "boş" : seg.pid) + " · " + seg.start + "–" + seg.end + "</title>";
+        out += "<title>" + esc(idle ? t("gantt.idle") : seg.pid) + " · " + seg.start + "–" + seg.end + "</title>";
       }
       out += "</g>";
     });
@@ -1043,7 +1402,7 @@
   function renderOrder(result) {
     const host = $("orderList");
     if (!result || !result.segments.length) {
-      host.innerHTML = '<span class="muted-cell" style="font-size:12px">Hələ hesablama aparılmayıb.</span>';
+      host.innerHTML = '<span class="muted-cell" style="font-size:12px">' + esc(t("order.empty")) + "</span>";
       return;
     }
     const colorById = {};
@@ -1054,13 +1413,13 @@
       const idle = !seg.pid;
       return '<span class="order-item"' + (idle ? ' style="color:var(--muted)"' : "") + '>' +
         (idle
-          ? '<span class="row-dot" style="margin:0;background:#cbd5e1"></span>boş'
+          ? '<span class="row-dot" style="margin:0;background:#cbd5e1"></span>' + esc(t("gantt.idle"))
           : '<span class="row-dot" style="margin:0;background:' + colorById[seg.pid] + '"></span><b>' + esc(seg.pid) + "</b>") +
         "<small>" + seg.start + "–" + seg.end + "</small></span>";
     }).join('<svg class="order-arrow" width="12" height="12"><use href="#i-arrow"/></svg>');
 
     const more = result.segments.length > limit
-      ? '<span class="order-item" style="color:var(--muted)">+' + (result.segments.length - limit) + " seqment</span>"
+      ? '<span class="order-item" style="color:var(--muted)">' + esc(t("order.more", { n: result.segments.length - limit })) + "</span>"
       : "";
 
     host.innerHTML = html + more;
@@ -1069,7 +1428,7 @@
   function renderMetrics(result) {
     const body = $("metricsBody");
     if (!result || !result.rows.length) {
-      body.innerHTML = '<tr><td colspan="8" class="muted-cell" style="text-align:center;padding:22px 10px">Cədvəl simulyasiyadan sonra doldurulacaq.</td></tr>';
+      body.innerHTML = '<tr><td colspan="8" class="muted-cell" style="text-align:center;padding:22px 10px">' + esc(t("metrics.empty")) + "</td></tr>";
       return;
     }
     let html = "";
@@ -1086,7 +1445,7 @@
       "</tr>";
     });
     html += '<tr style="background:#fbfcff">' +
-      '<td style="color:var(--muted);font-weight:650">Orta</td>' +
+      '<td style="color:var(--muted);font-weight:650">' + esc(t("metrics.avg")) + "</td>" +
       '<td class="muted-cell">—</td><td class="muted-cell">—</td><td class="muted-cell">—</td><td class="muted-cell">—</td>' +
       '<td style="font-weight:650">' + fmt(result.avgTat) + "</td>" +
       '<td style="font-weight:650">' + fmt(result.avgWt) + "</td>" +
@@ -1098,7 +1457,7 @@
   function renderComparison(procs, quantum) {
     const body = $("cmpBody");
     if (!procs.length) {
-      body.innerHTML = '<tr><td colspan="5" class="muted-cell" style="text-align:center;padding:22px 10px">Müqayisə üçün prosesləri daxil edin.</td></tr>';
+      body.innerHTML = '<tr><td colspan="5" class="muted-cell" style="text-align:center;padding:22px 10px">' + esc(t("cmp.empty")) + "</td></tr>";
       return;
     }
     const q = isInt(quantum) && quantum > 0 ? quantum : 2;
@@ -1113,8 +1472,8 @@
     body.innerHTML = items.map((x) => {
       const isBest = Math.abs(x.wt - best) < 1e-9;
       const barW = Math.max(2, (x.wt / maxWt) * 100);
-      return '<tr data-cmp-alg="' + x.key + '"' + (isBest ? ' class="best-row"' : "") + ' style="cursor:pointer" title="Bu alqoritmlə hesabla">' +
-        "<td>" + ALGS[x.key].label + (isBest ? ' <span class="pill">ən yaxşı</span>' : "") + "</td>" +
+      return '<tr data-cmp-alg="' + x.key + '"' + (isBest ? ' class="best-row"' : "") + ' style="cursor:pointer" title="' + esc(t("cmp.title")) + '">' +
+        "<td>" + esc(t("alg." + x.key)) + (isBest ? ' <span class="pill">' + esc(t("cmp.best")) + "</span>" : "") + "</td>" +
         "<td>" + fmt(x.wt) + "</td>" +
         "<td>" + fmt(x.tat) + "</td>" +
         "<td>" + fmt(x.rt) + "</td>" +
@@ -1152,8 +1511,8 @@
 
   function setPlayButton(playing) {
     $("playBtn").innerHTML = playing
-      ? '<svg width="13" height="13"><use href="#i-pause"/></svg>Dayandır'
-      : '<svg width="13" height="13"><use href="#i-play"/></svg>Addım-addım';
+      ? '<svg width="13" height="13"><use href="#i-pause"/></svg>' + esc(t("play.stop"))
+      : '<svg width="13" height="13"><use href="#i-play"/></svg>' + esc(t("play.step"));
   }
 
   function stopPlayback() {
@@ -1170,7 +1529,7 @@
     if (state.result) {
       state.revealed = state.result.segments.length;
       renderGantt(state.result, null, null);
-      $("playStatus").textContent = "Simulyasiya tamamlandı · " + state.result.segments.length + " seqment";
+      $("playStatus").textContent = t("play.done", { n: state.result.segments.length });
     }
   }
 
@@ -1184,8 +1543,8 @@
     const seg = state.result.segments[state.revealed - 1];
     renderGantt(state.result, state.revealed, state.revealed - 1);
     $("playStatus").innerHTML = seg.pid
-      ? "<b>" + esc(seg.pid) + "</b> icra olunur · " + seg.start + " – " + seg.end
-      : "Prosessor boşdur · " + seg.start + " – " + seg.end;
+      ? t("play.running", { id: esc(seg.pid), start: seg.start, end: seg.end })
+      : t("play.idle", { start: seg.start, end: seg.end });
     if (state.revealed >= state.result.segments.length) finishPlayback();
   }
 
@@ -1193,7 +1552,7 @@
     if (!state.result) return;
     if (state.playing) {
       stopPlayback();
-      $("playStatus").textContent = "Dayandırıldı";
+      $("playStatus").textContent = t("play.stopped");
       return;
     }
     state.playing = true;
@@ -1217,7 +1576,7 @@
     const err = validate(procs, quantum);
     if (err) {
       showMsg(err);
-      $("playStatus").textContent = "Girişdə xəta";
+      $("playStatus").textContent = t("play.inputError");
       return;
     }
 
@@ -1232,9 +1591,9 @@
     renderSummary(result);
     renderComparison(procs, quantum);
 
-    $("algLabel").textContent = ALGS[state.algorithm].label;
+    $("algLabel").textContent = t("alg." + state.algorithm);
     $("playBtn").disabled = false;
-    $("playStatus").textContent = segs.length + " seqment · hesablandı";
+    $("playStatus").textContent = t("play.calculated", { n: segs.length });
   }
 
   /* ---------------- preset ---------------- */
@@ -1339,56 +1698,16 @@
   /* ---------------- onboarding turu ---------------- */
 
   const TOUR = [
-    {
-      target: "#algGrid", place: "right",
-      title: "Alqoritmi seçin",
-      text: "FCFS, SJF, SRTF, Prioritet (preemptive və qeyri-preemptive) və Round Robin. Round Robin seçiləndə vaxt kvantı sahəsi görünür."
-    },
-    {
-      target: "#procBody", place: "right",
-      title: "Prosesləri daxil edin",
-      text: "Hər proses üçün ad, gəlmə vaxtı, burst vaxtı və prioritet. «Proses əlavə et» ilə yeni sətir, zibil qutusu ilə silmə."
-    },
-    {
-      target: "#presets", place: "right",
-      title: "Mühazirə nümunələri",
-      text: "Dərs 8-dəki hazır nümunələri bir kliklə yükləyin: FCFS, SJF, SRTF, Prioritet və Round Robin."
-    },
-    {
-      target: "#runBtn", place: "right",
-      title: "Simulyasiya et",
-      text: "Seçilmiş alqoritm üzrə icra qrafikini və bütün vaxt göstəricilərini hesablayır. Dəyərləri dəyişəndə nəticə avtomatik yenilənir."
-    },
-    {
-      target: "#summaryRow", place: "bottom",
-      title: "Xülasə göstəriciləri",
-      text: "Orta gözləmə (WT), dövriyyə (TAT) və cavab (RT) vaxtları, həmçinin CPU məşğulluğu faizi."
-    },
-    {
-      target: "#ganttCard", place: "bottom",
-      title: "İcra qrafiki (Gantt diaqramı)",
-      text: "Hansı prosesin hansı zaman aralığında icra olunduğunu göstərir. «Addım-addım» düyməsi və sürət seçimi ilə icranı tək-tək izləyin."
-    },
-    {
-      target: "#orderCard", place: "bottom",
-      title: "İcra sırası",
-      text: "Prosessora verilən proseslərin ardıcıllığı və vaxt aralıqları. Prosessorun boş qaldığı anlar da burada görünür."
-    },
-    {
-      target: "#metricsCard", place: "bottom",
-      title: "Proses göstəriciləri",
-      text: "Hər proses üçün başlama, tamamlanma, dövriyyə, gözləmə və cavab vaxtı; sonuncu sətirdə orta dəyərlər."
-    },
-    {
-      target: "#cmpCard", place: "bottom",
-      title: "Alqoritmlərin müqayisəsi",
-      text: "Eyni proseslər üzərində bütün alqoritmlərin orta nəticələri və ən yaxşısı. Sətrə klikləyərək həmin alqoritmlə hesablayın."
-    },
-    {
-      target: "#tourStart", place: "bottom",
-      title: "Turu yenidən izləyin",
-      text: "İstənilən vaxt yuxarıdaki «Turu izlə» düyməsi ilə bu bələdçini təkrar aça bilərsiniz."
-    }
+    { target: "#algGrid", place: "right", title: "tour.1.t", text: "tour.1.b" },
+    { target: "#procBody", place: "right", title: "tour.2.t", text: "tour.2.b" },
+    { target: "#presets", place: "right", title: "tour.3.t", text: "tour.3.b" },
+    { target: "#runBtn", place: "right", title: "tour.4.t", text: "tour.4.b" },
+    { target: "#summaryRow", place: "bottom", title: "tour.5.t", text: "tour.5.b" },
+    { target: "#ganttCard", place: "bottom", title: "tour.6.t", text: "tour.6.b" },
+    { target: "#orderCard", place: "bottom", title: "tour.7.t", text: "tour.7.b" },
+    { target: "#metricsCard", place: "bottom", title: "tour.8.t", text: "tour.8.b" },
+    { target: "#cmpCard", place: "bottom", title: "tour.9.t", text: "tour.9.b" },
+    { target: "#tourStart", place: "bottom", title: "tour.10.t", text: "tour.10.b" }
   ];
 
   const tourRoot = $("tourRoot");
@@ -1405,7 +1724,7 @@
 
   function buildTourDots() {
     $("tourDots").innerHTML = TOUR.map((s, i) =>
-      '<button class="tour-dot" type="button" data-dot="' + i + '" aria-label="Addım ' + (i + 1) + '"></button>'
+      '<button class="tour-dot" type="button" data-dot="' + i + '" aria-label="' + esc(t("tour.dotLabel", { i: i + 1 })) + '"></button>'
     ).join("");
   }
 
@@ -1477,19 +1796,25 @@
     placeTourTip(rect, pad, step.place);
   }
 
+  function paintTourLabels() {
+    const step = TOUR[tourIndex];
+    if (!step) return;
+    $("tourTitle").textContent = t(step.title);
+    $("tourText").textContent = t(step.text);
+    $("tourCount").textContent = t("tour.count", { i: tourIndex + 1, n: TOUR.length });
+    $("tourNext").textContent = tourIndex === TOUR.length - 1 ? t("tour.finish") : t("tour.next");
+    $("tourPrev").textContent = t("tour.prev");
+    $("tourPrev").disabled = tourIndex === 0;
+    syncTourDots();
+  }
+
   function showTourStep(i) {
     if (!tourActive()) return;
     if (i < 0 || i >= TOUR.length) { endTour(); return; }
     if (!document.querySelector(TOUR[i].target)) { showTourStep(i + 1); return; }
 
     tourIndex = i;
-    const step = TOUR[i];
-    $("tourTitle").textContent = step.title;
-    $("tourText").textContent = step.text;
-    $("tourCount").textContent = "Addım " + (i + 1) + " / " + TOUR.length;
-    $("tourNext").textContent = i === TOUR.length - 1 ? "Bitir" : "İleri";
-    $("tourPrev").disabled = i === 0;
-    syncTourDots();
+    paintTourLabels();
     paintTourStep();
   }
 
@@ -1536,6 +1861,14 @@
   });
 
   /* ---------------- init ---------------- */
+
+  applyI18n();
+  updateLangButtons();
+  document.querySelectorAll("#langSwitch [data-lang]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.lang !== lang) setLang(btn.dataset.lang);
+    });
+  });
 
   loadPreset("fcfs", false);
   run();

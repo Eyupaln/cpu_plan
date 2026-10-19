@@ -41,6 +41,8 @@ python -m http.server 8000
   «Turu izlə» düyməsi ilə istənilən vaxt təkrar açılır.
 - **Çap:** nəticələri səliqəli çap etmək üçün «Çap» düyməsi (dizayn çap üçün uyğunlaşdırılıb).
 - **Mühazirə nümunələri:** Dərs 8‑dəki hazır nümunələr bir kliklə yüklənir.
+- **İki dil (AZ / TR):** yuxarı sağdakı bayraq düymələri ilə interfeys Azərbaycan və Türk dilləri
+  arasında dəyişir; seçilmiş dil brauzerdə yadda saxlanılır.
 - Klaviatura: `→` ileri, `←` geri, `Esc` turu bağla.
 
 ---
@@ -125,4 +127,5 @@ A single-file, dependency-free interactive simulator for CPU scheduling algorith
 (FCFS, SJF, SRTF, Priority — preemptive and non-preemptive — and Round Robin).
 It shows a Gantt chart, per-process completion / turnaround / waiting / response times,
 averages, CPU utilisation, a step-by-step playback mode and a side-by-side comparison of
-all algorithms on the same process set. Open `index.html` in any browser to run it.
+all algorithms on the same process set. The interface is available in **Azerbaijani and
+Turkish** (flag buttons in the top bar). Open `index.html` in any browser to run it.
