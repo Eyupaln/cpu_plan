@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prosessorun planlaşdırılması — Simulyator</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --line:#e4e8f1;
+    --line-strong:#d3d9e6;
+    --ink:#0f172a;
+    --ink-2:#334155;
+    --muted:#64748b;
+    --muted-2:#94a3b8;
+    --accent:#4f46e5;
+    --accent-2:#4338ca;
+    --accent-soft:#eef2ff;
+    --accent-line:#c7d2fe;
+    --ok:#0f766e;
+    --ok-soft:#ecfdf5;
+    --warn:#b45309;
+    --warn-soft:#fffbeb;
+    --danger:#b91c1c;
+    --danger-soft:#fef2f2;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow:0 1px 2px rgba(15,23,42,.05), 0 8px 24px -18px rgba(15,23,42,.25);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 380px at 10% -12%, #e9edff 0%, rgba(233,237,255,0) 60%),
+      radial-gradient(900px 340px at 100% -18%, #e8f7f5 0%, rgba(232,247,245,0) 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,p{margin:0}
+  button{font:inherit;color:inherit}
+  svg{display:block}
+  .app{max-width:1440px;margin:0 auto;padding:22px 26px 40px}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
+  .brand{display:flex;align-items:center;gap:13px;min-width:0}
+  .brand-mark{
+    width:44px;height:44px;border-radius:13px;flex:0 0 auto;
+    display:grid;place-items:center;
+    background:linear-gradient(145deg,#5b52f0,#4338ca);
+    color:#fff;
+    box-shadow:0 8px 18px -10px rgba(67,56,202,.85), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .brand h1{font-size:18px;font-weight:650;letter-spacing:-.015em;line-height:1.25}
+  .brand p{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .badge{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:7px 12px;border:1px solid var(--line);border-radius:999px;
+    background:rgba(255,255,255,.75);color:var(--ink-2);
+    font-size:12px;font-weight:550;white-space:nowrap;
+    backdrop-filter:blur(6px);
+  }
+  .dot-live{width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.15)}
+
+  /* ---------- layout ---------- */
+  .layout{display:grid;grid-template-columns:392px minmax(0,1fr);gap:18px;align-items:start}
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .panel-input{position:sticky;top:18px;padding:18px}
+  .results{display:grid;gap:16px;min-width:0}
+  .card{padding:18px}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .card-title{display:flex;align-items:center;gap:10px;min-width:0}
+  .card-title h2{font-size:14.5px;font-weight:650;letter-spacing:-.01em}
+  .card-title p{font-size:12px;color:var(--muted);margin-top:1px}
+  .ico{
+    width:30px;height:30px;border-radius:9px;flex:0 0 auto;
+    display:grid;place-items:center;
+    background:var(--accent-soft);color:var(--accent-2);
+    border:1px solid #e3e8ff;
+  }
+  .ico.soft{background:#f8fafc;border-color:var(--line);color:var(--muted)}
+  .ico.teal{background:var(--ok-soft);border-color:#d5f0e6;color:var(--ok)}
+
+  /* ---------- form ---------- */
+  .section-label{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:11px;font-weight:700;letter-spacing:.075em;text-transform:uppercase;
+    color:var(--muted-2);margin:2px 0 9px;
+  }
+  .alg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+  .alg{position:relative;display:block;cursor:pointer}
+  .alg input{position:absolute;opacity:0;pointer-events:none}
+  .alg-body{
+    display:flex;align-items:flex-start;gap:9px;
+    padding:10px 10px 9px;border:1px solid var(--line);border-radius:11px;
+    background:#fbfcfe;transition:border-color .15s, background .15s, box-shadow .15s;
+    height:100%;
+  }
+  .alg-body:hover{border-color:var(--line-strong);background:#fff}
+  .alg svg{flex:0 0 auto;color:var(--muted);margin-top:1px}
+  .alg strong{display:block;font-size:12.5px;font-weight:650;letter-spacing:-.01em}
+  .alg span{display:block;font-size:10.8px;color:var(--muted);line-height:1.35;margin-top:1px}
+  .alg input:checked + .alg-body{
+    border-color:var(--accent-line);background:var(--accent-soft);
+    box-shadow:0 0 0 3px rgba(79,70,229,.07);
+  }
+  .alg input:checked + .alg-body svg{color:var(--accent-2)}
+  .alg input:focus-visible + .alg-body{outline:2px solid var(--accent);outline-offset:2px}
+
+  .field-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .field-row label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+  .field-row .hint{font-size:11px;color:var(--muted-2);display:block;font-weight:400;margin-top:1px}
+  .num{
+    width:84px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:9px;
+    background:#fff;font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink);
+    text-align:center;transition:border-color .15s, box-shadow .15s;
+  }
+  .num:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+  .hidden{display:none !important}
+
+  /* ---------- process table ---------- */
+  .proc-table{width:100%;border-collapse:collapse;margin-bottom:10px}
+  .proc-table th{
+    font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--muted-2);text-align:left;padding:0 6px 7px;white-space:nowrap;
+  }
+  .proc-table th.num-col{text-align:center}
+  .proc-table td{padding:3px 4px;border-top:1px solid #f0f3f9}
+  .proc-table tr:first-child td{border-top:none}
+  .cell-in{
+    width:100%;border:1px solid transparent;background:transparent;border-radius:7px;
+    padding:6px 6px;font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums;
+    transition:background .12s, border-color .12s;
+  }
+  .cell-in:hover{background:#f8fafc}
+  .cell-in:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+  .cell-in.id{font-weight:650;color:var(--ink);text-align:left}
+  .cell-in.n{text-align:center}
+  .cell-in.dim{color:var(--muted-2)}
+  .proc-table td:last-child{width:30px;text-align:right}
+  .row-del{
+    width:26px;height:26px;border:none;border-radius:7px;background:transparent;
+    color:var(--muted-2);display:grid;place-items:center;cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .row-del:hover{background:var(--danger-soft);color:var(--danger)}
+  .row-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:1px}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border:1px solid var(--line-strong);background:#fff;border-radius:10px;
+    padding:9px 13px;font-size:12.8px;font-weight:600;cursor:pointer;
+    transition:background .13s,border-color .13s,box-shadow .13s,transform .06s;
+    white-space:nowrap;
+  }
+  .btn:hover{background:#f8fafc;border-color:#c3cbdc}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn-primary{
+    background:linear-gradient(180deg,#5b52f0,#4f46e5);border-color:#4338ca;color:#fff;
+    box-shadow:0 6px 14px -8px rgba(67,56,202,.9), inset 0 1px 0 rgba(255,255,255,.18);
+  }
+  .btn-primary:hover{background:linear-gradient(180deg,#5148ea,#4338ca);border-color:#3730a3}
+  .btn-block{width:100%}
+  .btn-sm{padding:6px 10px;font-size:11.8px;border-radius:8px;gap:6px}
+  .btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+  .btn-ghost:hover{background:#f1f5f9;color:var(--ink-2);border-color:transparent}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  .actions{display:grid;gap:8px;margin-top:4px}
+  .actions-row{display:flex;gap:8px}
+  .actions-row .btn{flex:1}
+
+  /* ---------- presets ---------- */
+  .presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+  .chip{
+    border:1px solid var(--line);background:#fbfcfe;border-radius:999px;
+    padding:6px 10px;font-size:11.5px;font-weight:550;color:var(--ink-2);cursor:pointer;
+    transition:background .12s,border-color .12s,color .12s;
+  }
+  .chip:hover{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-2)}
+
+  /* ---------- error / note ---------- */
+  .msg{
+    display:none;align-items:flex-start;gap:8px;margin-top:12px;padding:9px 11px;
+    border-radius:10px;font-size:12px;line-height:1.45;
+  }
+  .msg.show{display:flex}
+  .msg.err{background:var(--danger-soft);color:#991b1b;border:1px solid #fecaca}
+  .msg.info{background:var(--warn-soft);color:#92400e;border:1px solid #fde68a}
+  .msg svg{flex:0 0 auto;margin-top:1px}
+
+  /* ---------- summary ---------- */
+  .summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:13px;
+    padding:13px 14px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .stat-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+  .stat-top span{font-size:11px;font-weight:650;letter-spacing:.02em;color:var(--muted);text-transform:uppercase}
+  .stat-top svg{color:var(--muted-2)}
+  .stat-value{font-size:23px;font-weight:680;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+  .stat-unit{font-size:12px;font-weight:500;color:var(--muted-2);margin-left:3px}
+  .stat-sub{font-size:11px;color:var(--muted-2);margin-top:4px}
+  .stat::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg,var(--accent),#818cf8);
+    opacity:.55;
+  }
+  .stat.teal::after{background:linear-gradient(90deg,#0f766e,#2dd4bf)}
+  .stat.amber::after{background:linear-gradient(90deg,#b45309,#f59e0b)}
+  .stat.slate::after{background:linear-gradient(90deg,#475569,#94a3b8)}
+
+  /* ---------- gantt ---------- */
+  .gantt-wrap{position:relative}
+  .gantt-scroll{overflow-x:auto;padding:2px 2px 0;scrollbar-width:thin}
+  .gantt-scroll::-webkit-scrollbar{height:8px}
+  .gantt-scroll::-webkit-scrollbar-thumb{background:#dbe2f0;border-radius:99px}
+  .gantt-svg{display:block}
+  .gantt-empty{
+    display:grid;place-items:center;height:132px;border:1px dashed var(--line-strong);
+    border-radius:12px;color:var(--muted-2);font-size:12.5px;text-align:center;padding:16px;
+    background:#fcfdff;
+  }
+  .playbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:12px;padding-top:12px;border-top:1px solid #f1f4fa;flex-wrap:wrap;
+  }
+  .play-left{display:flex;align-items:center;gap:8px;min-width:0}
+  .play-status{font-size:12px;color:var(--muted);min-width:0}
+  .play-status b{color:var(--ink);font-weight:650}
+  .speed{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted)}
+  .speed select{
+    border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:#fff;
+    font-size:11.5px;color:var(--ink-2);
+  }
+
+  /* ---------- order ---------- */
+  .order{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+  .order-item{
+    display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:8px;
+    background:#f8fafc;border:1px solid var(--line);font-size:12px;font-variant-numeric:tabular-nums;
+  }
+  .order-item b{font-weight:650}
+  .order-item small{color:var(--muted-2);font-size:10.5px}
+  .order-arrow{color:var(--muted-2);flex:0 0 auto}
+
+  /* ---------- table ---------- */
+  .tbl-wrap{overflow-x:auto}
+  table.data{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  table.data th{
+    text-align:right;font-size:10.5px;font-weight:700;letter-spacing:.045em;text-transform:uppercase;
+    color:var(--muted-2);padding:0 10px 8px;white-space:nowrap;
+  }
+  table.data th:first-child{text-align:left}
+  table.data td{
+    text-align:right;padding:9px 10px;border-top:1px solid #f0f3f9;font-size:12.5px;white-space:nowrap;
+  }
+  table.data td:first-child{text-align:left;font-weight:600}
+  table.data tr:hover td{background:#fbfcff}
+  .muted-cell{color:var(--muted)}
+  .best-row td{background:var(--ok-soft) !important}
+  .pill{
+    display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border-radius:999px;
+    font-size:10px;font-weight:700;letter-spacing:.02em;
+    background:var(--ok-soft);color:#0f766e;border:1px solid #cceee3;white-space:nowrap;
+  }
+
+  /* ---------- comparison ---------- */
+  .cmp-note{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+  .bar-cell{min-width:130px}
+  .bar{height:6px;border-radius:999px;background:#eef2f8;overflow:hidden;margin-top:5px}
+  .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#6366f1,#a5b4fc)}
+
+  /* ---------- onboarding turu ---------- */
+  .tour-root{position:fixed;inset:0;z-index:80;display:none}
+  .tour-root.on{display:block}
+  .tour-blocker{position:absolute;inset:0;background:transparent;cursor:default}
+  .tour-hole{
+    position:absolute;border-radius:15px;pointer-events:none;
+    -webkit-backdrop-filter:brightness(1.05) saturate(1.05);
+    backdrop-filter:brightness(1.05) saturate(1.05);
+    box-shadow:
+      0 0 0 3px rgba(255,255,255,.75),
+      0 0 0 5px rgba(99,102,241,.55),
+      0 0 0 9999px rgba(30,41,59,.46);
+  }
+  .tour-tip{
+    position:absolute;width:344px;max-width:calc(100vw - 28px);
+    padding:16px 16px 14px;border-radius:16px;
+    background:rgba(255,255,255,.9);
+    -webkit-backdrop-filter:blur(18px) saturate(1.5);
+    backdrop-filter:blur(18px) saturate(1.5);
+    border:1px solid rgba(255,255,255,.85);
+    box-shadow:0 26px 60px -22px rgba(15,23,42,.6), 0 2px 10px rgba(15,23,42,.16);
+  }
+  .tour-head{display:flex;align-items:flex-start;gap:11px}
+  .tour-ico{
+    width:32px;height:32px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;
+    background:linear-gradient(145deg,#5b52f0,#4338ca);color:#fff;
+    box-shadow:0 8px 16px -10px rgba(67,56,202,.9), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .tour-tip h3{font-size:14px;font-weight:680;letter-spacing:-.01em;color:var(--ink)}
+  .tour-tip p{font-size:12.5px;line-height:1.55;color:#475569;margin-top:3px}
+  .tour-x{
+    position:absolute;top:9px;right:9px;width:26px;height:26px;border:none;border-radius:8px;
+    background:transparent;color:var(--muted-2);font-size:17px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;transition:background .12s,color .12s;
+  }
+  .tour-x:hover{background:#eef2f8;color:var(--ink-2)}
+  .tour-arrow{
+    position:absolute;width:12px;height:12px;border-radius:2px;
+    background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.85);
+    transform:rotate(45deg);
+  }
+  .tour-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .tour-progress{display:flex;align-items:center;gap:9px;min-width:0}
+  .tour-count{font-size:11px;font-weight:600;color:var(--muted-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tour-dots{display:flex;gap:5px}
+  .tour-dot{
+    width:6px;height:6px;padding:0;border:none;border-radius:50%;background:#cbd5e1;cursor:pointer;
+    transition:background .15s,transform .15s;
+  }
+  .tour-dot:hover{background:#94a3b8}
+  .tour-dot.on{background:var(--accent);transform:scale(1.3)}
+  .tour-btns{display:flex;gap:7px}
+
+  footer{margin-top:22px;color:var(--muted-2);font-size:11.5px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  footer b{color:var(--muted);font-weight:600}
+
+  @media (max-width:1120px){
+    .layout{grid-template-columns:352px minmax(0,1fr)}
+  }
+  @media (max-width:1000px){
+    .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:900px){
+    .app{padding:16px 14px 30px}
+    .layout{grid-template-columns:1fr}
+    .panel-input{position:static}
+    .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:560px){
+    .alg-grid{grid-template-columns:1fr}
+    .brand p{display:none}
+    .badge{display:none}
+    .stat-value{font-size:20px}
+  }
+  @media print{
+    body{background:#fff}
+    .panel-input,.playbar,.badge{display:none !important}
+    .layout{grid-template-columns:1fr}
+    .stat,.panel{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="6" width="12" height="12" rx="2.5"/><rect x="10" y="10" width="4" height="4" rx="1"/>
+    <path d="M9 2.5V5M15 2.5V5M9 19v2.5M15 19v2.5M2.5 9H5M2.5 15H5M19 9h2.5M19 15h2.5"/>
+  </symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.2a1 1 0 0 1 1.53-.85l9.1 6.8a1 1 0 0 1 0 1.7l-9.1 6.8A1 1 0 0 1 8 18.8V5.2z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.4" height="14" rx="1.2"/><rect x="13.6" y="5" width="3.4" height="14" rx="1.2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 4.5V10h5.5"/><path d="M3.9 14.2A8.6 8.6 0 1 0 5 6.4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V10M9.3 19.5V4.5M14.7 19.5v-6M20 19.5V7.5M2.5 21h19"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 6.5h12M8.5 12h12M8.5 17.5h12"/><circle cx="4" cy="6.5" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="17.5" r="1"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.2"/><path d="M3 9.8h18M9.2 9.8v9.7"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v17M7.5 20.5h9"/><path d="M12 6.5 5 11h14L12 6.5z"/><path d="M5 11l-2.2 4.3a2.9 2.9 0 0 0 4.4 0L5 11zM19 11l-2.2 4.3a2.9 2.9 0 0 0 4.4 0L19 11z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.7"/><path d="M12 7.3V12l3.2 2"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.5l3.8 3.8L17 10.1"/><path d="M3.5 11.2V9.4a3.1 3.1 0 0 1 3.1-3.1h14.2"/><path d="M7 21.5l-3.8-3.8L7 13.9"/><path d="M20.5 12.8v1.8a3.1 3.1 0 0 1-3.1 3.1H3.2"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M13 2.5 4.8 13.6h6L10 21.5l8.2-11.1h-6l.8-7.9z"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.8 18.5a8.8 8.8 0 1 1 16.4 0"/><path d="M12 18.5l4.2-5.3"/><circle cx="12" cy="18.5" r="1.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 21 19.3H3L12 3.2z"/><path d="M12 9v4.6M12 16.9h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.8"/><path d="M12 11v5.6M12 7.9h.01"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-queue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h9M3 12h7M3 18h9"/><path d="M16 8.5 20.5 12 16 15.5"/></symbol>
+  <symbol id="i-short" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v17M6.5 14.5 12 20l5.5-5.5"/><path d="M6.5 5.5h11"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.2" r="7.8"/><path d="M12 9.4v3.8l2.8 1.7M9 2.6h6M18.6 6.4l1.5-1.5"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 21V3.5"/><path d="M5.5 4.5h11.2l-2 4 2 4H5.5"/></symbol>
+  <symbol id="i-rot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M20.5 3.5V9H15"/><path d="M12 8.4V12l2.6 1.6"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V3.5h10V8"/><rect x="3" y="8" width="18" height="8.5" rx="2"/><path d="M7 14h10v6.5H7z"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.1"/><circle cx="9" cy="17" r="2.1"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><svg width="23" height="23"><use href="#i-cpu"/></svg></div>
+      <div>
+        <h1>Prosessorun planlaşdırılması</h1>
+        <p>FCFS · SJF · SRTF · Prioritet · Round Robin — interaktiv simulyator</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn btn-sm" id="tourStart" type="button">
+        <svg width="13" height="13"><use href="#i-play"/></svg>Turu izlə
+      </button>
+      <div class="badge"><span class="dot-live"></span>Canlı hesablama</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel panel-input">
+      <div class="card-title" style="margin-bottom:15px">
+        <span class="ico"><svg width="16" height="16"><use href="#i-sliders"/></svg></span>
+        <div>
+          <h2>Giriş parametrləri</h2>
+          <p>Alqoritmi seçin və prosesləri daxil edin</p>
+        </div>
+      </div>
+
+      <div class="section-label">Alqoritm</div>
+      <div class="alg-grid" id="algGrid">
+        <label class="alg">
+          <input type="radio" name="alg" value="fcfs" checked>
+          <span class="alg-body">
+            <svg width="16" height="16"><use href="#i-queue"/></svg>
+            <span><strong>FCFS</strong><span>İlk gələn, ilk icra</span></span>
+          </span>
+        </label>
+        <label class="alg">
+          <input type="radio" name="alg" value="sjf">
+          <span class="alg-body">
+            <svg width="16" height="16"><use href="#i-short"/></svg>
+            <span><strong>SJF</strong><span>Ən qısa burst əvvəl</span></span>
+          </span>
+        </label>
+        <label class="alg">
+          <input type="radio" name="alg" value="srtf">
+          <span class="alg-body">
+            <svg width="16" height="16"><use href="#i-timer"/></svg>
+            <span><strong>SRTF</strong><span>Preemptive SJF</span></span>
+          </span>
+        </label>
+        <label class="alg">
+          <input type="radio" name="alg" value="prio">
+          <span class="alg-body">
+            <svg width="16" height="16"><use href="#i-flag"/></svg>
+            <span><strong>Prioritet</strong><span>Preemptive deyil</span></span>
+          </span>
+        </label>
+        <label class="alg">
+          <input type="radio" name="alg" value="priop">
+          <span class="alg-body">
+            <svg width="16" height="16"><use href="#i-flag"/></svg>
+            <span><strong>Prioritet</strong><span>Preemptive</span></span>
+          </span>
+        </label>
+        <label class="alg">
+          <input type="radio" name="alg" value="rr">
+          <span class="alg-body">
+            <svg width="16" height="16"><use href="#i-rot"/></svg>
+            <span><strong>Round Robin</strong><span>Kvantla dairəvi</span></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="field-row hidden" id="quantumField">
+        <label for="quantum">Vaxt kvantı <span class="hint">Round Robin üçün</span></label>
+        <input class="num" id="quantum" type="number" min="1" step="1" value="2">
+      </div>
+
+      <div class="section-label">Proseslər <span id="procCount" style="letter-spacing:0;text-transform:none;font-weight:600;color:var(--muted)">0 proses</span></div>
+      <table class="proc-table">
+        <thead>
+          <tr>
+            <th>Proses</th>
+            <th class="num-col">Gəlmə</th>
+            <th class="num-col">Burst</th>
+            <th class="num-col">Prioritet</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="procBody"></tbody>
+      </table>
+      <button class="btn btn-sm btn-block" id="addProc" type="button">
+        <svg width="14" height="14"><use href="#i-plus"/></svg>Proses əlavə et
+      </button>
+
+      <div class="section-label" style="margin-top:17px">Mühazirə nümunələri</div>
+      <div class="presets" id="presets">
+        <button class="chip" type="button" data-preset="fcfs">FCFS</button>
+        <button class="chip" type="button" data-preset="sjf">SJF</button>
+        <button class="chip" type="button" data-preset="srtf">SRTF</button>
+        <button class="chip" type="button" data-preset="prio">Prioritet</button>
+        <button class="chip" type="button" data-preset="rr">Round Robin</button>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary btn-block" id="runBtn" type="button">
+          <svg width="15" height="15"><use href="#i-play"/></svg>Simulyasiya et
+        </button>
+        <div class="actions-row">
+          <button class="btn" id="resetBtn" type="button">
+            <svg width="14" height="14"><use href="#i-reset"/></svg>Sıfırla
+          </button>
+          <button class="btn" id="printBtn" type="button">
+            <svg width="14" height="14"><use href="#i-print"/></svg>Çap
+          </button>
+        </div>
+      </div>
+
+      <div class="msg" id="msg">
+        <svg width="15" height="15"><use href="#i-alert"/></svg>
+        <span id="msgText"></span>
+      </div>
+    </aside>
+
+    <section class="results">
+      <div class="summary" id="summaryRow">
+        <div class="stat">
+          <div class="stat-top"><span>Orta gözləmə</span><svg width="15" height="15"><use href="#i-clock"/></svg></div>
+          <div class="stat-value" id="avgWt">—</div>
+          <div class="stat-sub">Waiting time (WT)</div>
+        </div>
+        <div class="stat teal">
+          <div class="stat-top"><span>Orta dövriyyə</span><svg width="15" height="15"><use href="#i-repeat"/></svg></div>
+          <div class="stat-value" id="avgTat">—</div>
+          <div class="stat-sub">Turnaround time (TAT)</div>
+        </div>
+        <div class="stat amber">
+          <div class="stat-top"><span>Orta cavab</span><svg width="15" height="15"><use href="#i-zap"/></svg></div>
+          <div class="stat-value" id="avgRt">—</div>
+          <div class="stat-sub">Response time (RT)</div>
+        </div>
+        <div class="stat slate">
+          <div class="stat-top"><span>CPU məşğulluğu</span><svg width="15" height="15"><use href="#i-gauge"/></svg></div>
+          <div class="stat-value" id="cpuUtil">—</div>
+          <div class="stat-sub" id="idleSub">Boş vaxt —</div>
+        </div>
+      </div>
+
+      <div class="panel card" id="ganttCard">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="ico"><svg width="16" height="16"><use href="#i-chart"/></svg></span>
+            <div><h2>İcra qrafiki</h2><p>Gantt diaqramı — proseslərin zaman üzrə sırası</p></div>
+          </div>
+          <span class="badge" id="algLabel" style="font-weight:600">FCFS</span>
+        </div>
+        <div id="ganttArea">
+          <div class="gantt-empty">Nəticələri görmək üçün parametrləri daxil edin və «Simulyasiya et» düyməsini basın.</div>
+        </div>
+        <div class="playbar">
+          <div class="play-left">
+            <button class="btn btn-sm" id="playBtn" type="button" disabled>
+              <svg width="13" height="13"><use href="#i-play"/></svg>Addım-addım
+            </button>
+            <span class="play-status" id="playStatus">Hazır</span>
+          </div>
+          <div class="speed">
+            <label for="speed">Sürət</label>
+            <select id="speed">
+              <option value="1000">Yavaş</option>
+              <option value="650" selected>Orta</option>
+              <option value="320">Sürətli</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel card" id="orderCard">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="ico soft"><svg width="16" height="16"><use href="#i-list"/></svg></span>
+            <div><h2>İcra sırası</h2><p>Prosessora hansı proses, hansı aralıqda verilib</p></div>
+          </div>
+        </div>
+        <div class="order" id="orderList">
+          <span class="muted-cell" style="font-size:12px">Hələ hesablama aparılmayıb.</span>
+        </div>
+      </div>
+
+      <div class="panel card" id="metricsCard">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="ico soft"><svg width="16" height="16"><use href="#i-table"/></svg></span>
+            <div><h2>Proses göstəriciləri</h2><p>Hər proses üzrə hesablanmış vaxtlar</p></div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="data" id="metricsTable">
+            <thead>
+              <tr>
+                <th>Proses</th><th>Gəlmə</th><th>Burst</th><th>Başlama</th>
+                <th>Tamamlanma</th><th>Dövriyyə</th><th>Gözləmə</th><th>Cavab</th>
+              </tr>
+            </thead>
+            <tbody id="metricsBody">
+              <tr><td colspan="8" class="muted-cell" style="text-align:center;padding:22px 10px">Cədvəl simulyasiyadan sonra doldurulacaq.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel card" id="cmpCard">
+        <div class="card-head">
+          <div class="card-title">
+            <span class="ico teal"><svg width="16" height="16"><use href="#i-scale"/></svg></span>
+            <div><h2>Alqoritmlərin müqayisəsi</h2><p>Eyni proseslər üzərində orta göstəricilər</p></div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="data" id="cmpTable">
+            <thead>
+              <tr><th>Alqoritm</th><th>Orta WT</th><th>Orta TAT</th><th>Orta RT</th><th class="bar-cell" style="text-align:left">Gözləmə müqayisəsi</th></tr>
+            </thead>
+            <tbody id="cmpBody">
+              <tr><td colspan="5" class="muted-cell" style="text-align:center;padding:22px 10px">Müqayisə üçün prosesləri daxil edin.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cmp-note" id="cmpNote">Prioritet alqoritmlərində kiçik ədəd yüksək prioritet sayılır. Round Robin müqayisəsində yuxarıda seçilmiş vaxt kvantı istifadə olunur; kvant bitdiyi anda gələn proses növbəyə cari prosesdən əvvəl qoyulur. Cədvəldəki sətrə klikləməklə həmin alqoritmlə hesablaya bilərsiniz.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Mənbə: <b>Mühazirə 8 — Prosessorun planlaşdırılması</b></span>
+    <span>Boş vaxtlar boz rənglə göstərilir · Vaxt vahidləri şərtidir</span>
+  </footer>
+</div>
+
+<div class="tour-root" id="tourRoot" aria-hidden="true">
+  <div class="tour-blocker" id="tourBlock"></div>
+  <div class="tour-hole" id="tourHole"></div>
+  <div class="tour-tip" id="tourTip" role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+    <div class="tour-arrow" id="tourArrow"></div>
+    <button class="tour-x" id="tourClose" type="button" aria-label="Turu bağla">&times;</button>
+    <div class="tour-head">
+      <span class="tour-ico"><svg width="15" height="15"><use href="#i-play"/></svg></span>
+      <div>
+        <h3 id="tourTitle">Başlıq</h3>
+        <p id="tourText">Mətn</p>
+      </div>
+    </div>
+    <div class="tour-foot">
+      <div class="tour-progress">
+        <span class="tour-count" id="tourCount"></span>
+        <div class="tour-dots" id="tourDots"></div>
+      </div>
+      <div class="tour-btns">
+        <button class="btn btn-sm" id="tourPrev" type="button">Geri</button>
+        <button class="btn btn-sm btn-primary" id="tourNext" type="button">İleri</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  const COLORS = [
+    "#4f46e5", "#0d9488", "#c2410c", "#7c3aed", "#0369a1",
+    "#be123c", "#4d7c0f", "#a16207", "#0f766e", "#6d28d9"
+  ];
+
+  const ALGS = {
+    fcfs:  { label: "FCFS",            name: "First-Come, First-Served" },
+    sjf:   { label: "SJF",             name: "Shortest-Job-First" },
+    srtf:  { label: "SRTF",            name: "Shortest-Remaining-Time-First" },
+    prio:  { label: "Prioritet",       name: "Prioritet (qeyri-preemptive)" },
+    priop: { label: "Prioritet (P)",   name: "Prioritet (preemptive)" },
+    rr:    { label: "Round Robin",     name: "Round Robin" }
+  };
+
+  const state = {
+    procs: [],
+    result: null,
+    revealed: 0,
+    timer: null,
+    playing: false,
+    quantum: 2,
+    algorithm: "fcfs"
+  };
+
+  /* ---------------- utils ---------------- */
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  function fmt(n) {
+    if (n === null || n === undefined || !isFinite(n)) return "—";
+    const r = Math.round(n * 100) / 100;
+    if (Number.isInteger(r)) return String(r);
+    return r.toFixed(2).replace(/0+$/, "").replace(/\.$/, "").replace(".", ",");
+  }
+
+  function isInt(v) {
+    return typeof v === "number" && isFinite(v) && Math.floor(v) === v;
+  }
+
+  function addSeg(segs, pid, start, end) {
+    if (end <= start) return;
+    const last = segs[segs.length - 1];
+    if (last && last.pid === pid && last.end === start) {
+      last.end = end;
+    } else {
+      segs.push({ pid: pid, start: start, end: end });
+    }
+  }
+
+  /* ---------------- algorithms ---------------- */
+
+  function buildFCFS(procs) {
+    const list = procs.slice().sort((a, b) => a.arrival - b.arrival || a.order - b.order);
+    const segs = [];
+    let t = 0;
+    for (const p of list) {
+      if (t < p.arrival) {
+        addSeg(segs, null, t, p.arrival);
+        t = p.arrival;
+      }
+      addSeg(segs, p.id, t, t + p.burst);
+      t += p.burst;
+    }
+    return segs;
+  }
+
+  function buildNonPreemptive(procs, cmp) {
+    const remaining = new Set(procs.map((p) => p.id));
+    const segs = [];
+    let t = 0;
+    while (remaining.size > 0) {
+      const avail = procs.filter((p) => remaining.has(p.id) && p.arrival <= t);
+      if (avail.length === 0) {
+        const next = Math.min.apply(null, procs.filter((p) => remaining.has(p.id)).map((p) => p.arrival));
+        addSeg(segs, null, t, next);
+        t = next;
+        continue;
+      }
+      avail.sort(cmp);
+      const p = avail[0];
+      addSeg(segs, p.id, t, t + p.burst);
+      t += p.burst;
+      remaining.delete(p.id);
+    }
+    return segs;
+  }
+
+  function buildPreemptive(procs, cmp) {
+    const rem = new Map(procs.map((p) => [p.id, p.burst]));
+    const segs = [];
+    const limit = procs.reduce((s, p) => s + p.burst, 0) + Math.max.apply(null, procs.map((p) => p.arrival)) + 5;
+    let t = 0;
+    let left = procs.length;
+    while (left > 0) {
+      const avail = procs.filter((p) => p.arrival <= t && rem.get(p.id) > 0);
+      if (avail.length === 0) {
+        const next = Math.min.apply(null, procs.filter((p) => rem.get(p.id) > 0).map((p) => p.arrival));
+        addSeg(segs, null, t, next);
+        t = next;
+        continue;
+      }
+      avail.sort((a, b) => cmp(a, b, rem));
+      const p = avail[0];
+      addSeg(segs, p.id, t, t + 1);
+      rem.set(p.id, rem.get(p.id) - 1);
+      t += 1;
+      if (rem.get(p.id) === 0) left -= 1;
+      if (t > limit) break;
+    }
+    return segs;
+  }
+
+  function buildRR(procs, quantum) {
+    const sorted = procs.slice().sort((a, b) => a.arrival - b.arrival || a.order - b.order);
+    const rem = new Map(procs.map((p) => [p.id, p.burst]));
+    const queue = [];
+    const segs = [];
+    let t = 0;
+    let idx = 0;
+    let done = 0;
+    while (done < procs.length) {
+      while (idx < sorted.length && sorted[idx].arrival <= t) {
+        queue.push(sorted[idx]);
+        idx += 1;
+      }
+      if (queue.length === 0) {
+        if (idx >= sorted.length) break;
+        const next = sorted[idx].arrival;
+        addSeg(segs, null, t, next);
+        t = next;
+        continue;
+      }
+      const p = queue.shift();
+      const run = Math.min(quantum, rem.get(p.id));
+      addSeg(segs, p.id, t, t + run);
+      t += run;
+      rem.set(p.id, rem.get(p.id) - run);
+      while (idx < sorted.length && sorted[idx].arrival <= t) {
+        queue.push(sorted[idx]);
+        idx += 1;
+      }
+      if (rem.get(p.id) > 0) queue.push(p);
+      else done += 1;
+    }
+    return segs;
+  }
+
+  function buildSchedule(key, procs, quantum) {
+    if (key === "fcfs") return buildFCFS(procs);
+    if (key === "sjf") {
+      return buildNonPreemptive(procs, (a, b) => a.burst - b.burst || a.arrival - b.arrival || a.order - b.order);
+    }
+    if (key === "srtf") {
+      return buildPreemptive(procs, (a, b, rem) =>
+        rem.get(a.id) - rem.get(b.id) || a.arrival - b.arrival || a.order - b.order);
+    }
+    if (key === "prio") {
+      return buildNonPreemptive(procs, (a, b) =>
+        a.priority - b.priority || a.arrival - b.arrival || a.order - b.order);
+    }
+    if (key === "priop") {
+      return buildPreemptive(procs, (a, b) =>
+        a.priority - b.priority || a.arrival - b.arrival || a.order - b.order);
+    }
+    return buildRR(procs, quantum);
+  }
+
+  /* ---------------- metrics ---------------- */
+
+  function computeMetrics(procs, segs) {
+    const total = segs.length ? segs[segs.length - 1].end : 0;
+    let busy = 0;
+    for (const s of segs) if (s.pid) busy += s.end - s.start;
+
+    const rows = procs.map((p) => {
+      const own = segs.filter((s) => s.pid === p.id);
+      const first = own.length ? own[0].start : p.arrival;
+      const ct = own.length ? own[own.length - 1].end : p.arrival;
+      const tat = ct - p.arrival;
+      const wt = tat - p.burst;
+      const rt = first - p.arrival;
+      return {
+        id: p.id, arrival: p.arrival, burst: p.burst, priority: p.priority,
+        color: p.color, first: first, ct: ct, tat: tat, wt: wt, rt: rt
+      };
+    });
+
+    const avg = (k) => (rows.length ? rows.reduce((a, r) => a + r[k], 0) / rows.length : 0);
+
+    return {
+      segments: segs,
+      rows: rows,
+      total: total,
+      busy: busy,
+      idle: total - busy,
+      avgWt: avg("wt"),
+      avgTat: avg("tat"),
+      avgRt: avg("rt"),
+      util: total ? (busy / total) * 100 : 0
+    };
+  }
+
+  /* ---------------- validation ---------------- */
+
+  function readProcs() {
+    return state.procs.map((p, i) => ({
+      id: String(p.id || "").trim(),
+      arrival: Number(p.arrival),
+      burst: Number(p.burst),
+      priority: Number(p.priority),
+      order: i,
+      color: COLORS[i % COLORS.length]
+    }));
+  }
+
+  function validate(procs, quantum) {
+    if (procs.length === 0) return "Ən azı bir proses əlavə edin.";
+    const seen = new Set();
+    for (const p of procs) {
+      if (!p.id) return "Proses adı boş ola bilməz.";
+      if (seen.has(p.id)) return "Proses adları təkrar olunmamalıdır: " + p.id + ".";
+      seen.add(p.id);
+    }
+    for (const p of procs) {
+      if (!isInt(p.arrival) || p.arrival < 0) return "«Gəlmə vaxtı» mənfi olmayan tam ədəd olmalıdır (" + p.id + ").";
+      if (!isInt(p.burst) || p.burst < 1) return "«Burst» 1 və ya daha böyük tam ədəd olmalıdır (" + p.id + ").";
+      if (!isInt(p.priority)) return "«Prioritet» tam ədəd olmalıdır (" + p.id + ").";
+    }
+    if (state.algorithm === "rr" && (!isInt(quantum) || quantum < 1)) {
+      return "Vaxt kvantı 1 və ya daha böyük tam ədəd olmalıdır.";
+    }
+    const totalBurst = procs.reduce((s, p) => s + p.burst, 0);
+    if (totalBurst > 400) return "Ümumi icra müddəti 400 vahidi keçməməlidir.";
+    return null;
+  }
+
+  /* ---------------- presets ---------------- */
+
+  const PRESETS = {
+    fcfs: {
+      alg: "fcfs", quantum: 2,
+      procs: [["P1", 0, 24, 3], ["P2", 0, 3, 1], ["P3", 0, 3, 2]]
+    },
+    sjf: {
+      alg: "sjf", quantum: 2,
+      procs: [["P1", 0, 6, 3], ["P2", 0, 8, 1], ["P3", 0, 7, 2], ["P4", 0, 3, 4]]
+    },
+    srtf: {
+      alg: "srtf", quantum: 2,
+      procs: [["P1", 0, 8, 3], ["P2", 1, 4, 1], ["P3", 2, 9, 4], ["P4", 3, 5, 2]]
+    },
+    prio: {
+      alg: "prio", quantum: 2,
+      procs: [["P1", 0, 10, 3], ["P2", 0, 1, 1], ["P3", 0, 2, 4], ["P4", 0, 1, 5], ["P5", 0, 5, 2]]
+    },
+    rr: {
+      alg: "rr", quantum: 2,
+      procs: [["P1", 0, 4, 3], ["P2", 0, 5, 2], ["P3", 0, 8, 2], ["P4", 0, 7, 1], ["P5", 0, 3, 3]]
+    }
+  };
+
+  /* ---------------- table ---------------- */
+
+  function renderTable() {
+    const body = $("procBody");
+    if (state.procs.length === 0) {
+      body.innerHTML = '<tr><td colspan="5" style="padding:16px 6px;text-align:center;color:var(--muted-2);font-size:12px">Proses yoxdur. «Proses əlavə et» düyməsini basın.</td></tr>';
+    } else {
+      body.innerHTML = state.procs.map((p, i) =>
+        '<tr data-idx="' + i + '">' +
+          '<td style="display:flex;align-items:center;gap:5px">' +
+            '<span class="row-dot" style="margin:0;background:' + COLORS[i % COLORS.length] + '"></span>' +
+            '<input class="cell-in id" style="flex:1;min-width:0" data-field="id" value="' + esc(p.id) + '" spellcheck="false" aria-label="Proses adı">' +
+          '</td>' +
+          '<td><input class="cell-in n" data-field="arrival" type="number" min="0" step="1" value="' + esc(p.arrival) + '" aria-label="Gəlmə vaxtı"></td>' +
+          '<td><input class="cell-in n" data-field="burst" type="number" min="1" step="1" value="' + esc(p.burst) + '" aria-label="Burst"></td>' +
+          '<td><input class="cell-in n" data-field="priority" type="number" step="1" value="' + esc(p.priority) + '" aria-label="Prioritet"></td>' +
+          '<td><button class="row-del" type="button" data-del="' + i + '" title="Prosesi sil" aria-label="Prosesi sil">' +
+            '<svg width="14" height="14"><use href="#i-trash"/></svg></button></td>' +
+        '</tr>'
+      ).join("");
+    }
+    $("procCount").textContent = state.procs.length + " proses";
+  }
+
+  function nextId() {
+    let max = 0;
+    for (const p of state.procs) {
+      const m = /^P(\d+)$/i.exec(String(p.id).trim());
+      if (m) max = Math.max(max, Number(m[1]));
+    }
+    return "P" + (max + 1);
+  }
+
+  /* ---------------- rendering ---------------- */
+
+  function renderSummary(result) {
+    $("avgWt").textContent = fmt(result.avgWt);
+    $("avgTat").textContent = fmt(result.avgTat);
+    $("avgRt").textContent = fmt(result.avgRt);
+    $("cpuUtil").innerHTML = fmt(result.util) + '<span class="stat-unit">%</span>';
+    $("idleSub").textContent = "Boş vaxt " + fmt(result.idle) + " · Ümumi " + fmt(result.total);
+  }
+
+  function renderGantt(result, revealCount, activeIndex) {
+    const host = $("ganttArea");
+    if (!result || !result.segments.length) {
+      host.innerHTML = '<div class="gantt-empty">Nəticələri görmək üçün parametrləri daxil edin və «Simulyasiya et» düyməsini basın.</div>';
+      return;
+    }
+
+    const total = Math.max(result.total, 1);
+    let unit = 900 / total;
+    unit = Math.max(15, Math.min(46, unit));
+    let width = total * unit;
+    if (width < 640) { unit = 640 / total; width = 640; }
+    if (width > 3200) { unit = 3200 / total; width = 3200; }
+
+    const barY = 10;
+    const barH = 48;
+    const axisY = barY + barH + 4;
+    const shown = revealCount == null ? result.segments.length : revealCount;
+
+    const colorById = {};
+    result.rows.forEach((r) => { colorById[r.id] = r.color; });
+
+    let out = '<svg class="gantt-svg" width="' + width.toFixed(1) + '" height="108" viewBox="0 0 ' + width.toFixed(1) + ' 108" role="img" aria-label="İcra qrafiki">';
+    out += '<line x1="0" y1="' + axisY + '" x2="' + width.toFixed(1) + '" y2="' + axisY + '" stroke="#eef2f8" stroke-width="1"/>';
+
+    result.segments.slice(0, shown).forEach((seg, i) => {
+      const x = seg.start * unit;
+      const w = (seg.end - seg.start) * unit;
+      const idle = !seg.pid;
+      const fill = idle ? "#e8edf6" : (colorById[seg.pid] || "#4f46e5");
+      const active = activeIndex != null && i === activeIndex;
+      out += "<g>";
+      out += '<rect x="' + (x + 1).toFixed(2) + '" y="' + barY + '" width="' + Math.max(w - 2, 1.5).toFixed(2) + '" height="' + barH + '" rx="6" fill="' + fill + '"' +
+        (active ? ' stroke="#0f172a" stroke-width="1.6"' : "") + "/>";
+      if (w >= 30) {
+        const label = idle ? "boş" : seg.pid;
+        out += '<text x="' + (x + w / 2).toFixed(1) + '" y="' + (barY + barH / 2) + '" text-anchor="middle" dominant-baseline="middle" ' +
+          'font-family="Segoe UI, system-ui, sans-serif" font-size="' + (w < 42 ? 10 : 12) + '" font-weight="' + (idle ? 500 : 650) + '" ' +
+          'fill="' + (idle ? "#94a3b8" : "#ffffff") + '">' + esc(label) + "</text>";
+      } else {
+        out += "<title>" + esc(idle ? "boş" : seg.pid) + " · " + seg.start + "–" + seg.end + "</title>";
+      }
+      out += "</g>";
+    });
+
+    const bounds = [];
+    result.segments.forEach((s) => bounds.push(s.start));
+    bounds.push(result.segments[result.segments.length - 1].end);
+    const unique = Array.from(new Set(bounds)).sort((a, b) => a - b);
+    let lastLabelX = -999;
+    unique.forEach((b, i) => {
+      const x = b * unit;
+      const isLast = i === unique.length - 1;
+      out += '<line x1="' + x.toFixed(1) + '" y1="' + axisY + '" x2="' + x.toFixed(1) + '" y2="' + (axisY + 6) + '" stroke="#cbd5e1" stroke-width="1"/>';
+      if (isLast || x - lastLabelX >= 28) {
+        const anchor = i === 0 ? "start" : (isLast ? "end" : "middle");
+        out += '<text x="' + x.toFixed(1) + '" y="' + (axisY + 24) + '" text-anchor="' + anchor + '" ' +
+          'font-family="Segoe UI, system-ui, sans-serif" font-size="10.5" fill="#94a3b8">' + b + "</text>";
+        lastLabelX = x;
+      }
+    });
+
+    out += "</svg>";
+    host.innerHTML = '<div class="gantt-scroll">' + out + "</div>";
+  }
+
+  function renderOrder(result) {
+    const host = $("orderList");
+    if (!result || !result.segments.length) {
+      host.innerHTML = '<span class="muted-cell" style="font-size:12px">Hələ hesablama aparılmayıb.</span>';
+      return;
+    }
+    const colorById = {};
+    result.rows.forEach((r) => { colorById[r.id] = r.color; });
+    const limit = 48;
+    const list = result.segments.slice(0, limit);
+    const html = list.map((seg) => {
+      const idle = !seg.pid;
+      return '<span class="order-item"' + (idle ? ' style="color:var(--muted)"' : "") + '>' +
+        (idle
+          ? '<span class="row-dot" style="margin:0;background:#cbd5e1"></span>boş'
+          : '<span class="row-dot" style="margin:0;background:' + colorById[seg.pid] + '"></span><b>' + esc(seg.pid) + "</b>") +
+        "<small>" + seg.start + "–" + seg.end + "</small></span>";
+    }).join('<svg class="order-arrow" width="12" height="12"><use href="#i-arrow"/></svg>');
+
+    const more = result.segments.length > limit
+      ? '<span class="order-item" style="color:var(--muted)">+' + (result.segments.length - limit) + " seqment</span>"
+      : "";
+
+    host.innerHTML = html + more;
+  }
+
+  function renderMetrics(result) {
+    const body = $("metricsBody");
+    if (!result || !result.rows.length) {
+      body.innerHTML = '<tr><td colspan="8" class="muted-cell" style="text-align:center;padding:22px 10px">Cədvəl simulyasiyadan sonra doldurulacaq.</td></tr>';
+      return;
+    }
+    let html = "";
+    result.rows.forEach((r) => {
+      html += "<tr>" +
+        '<td><span class="row-dot" style="background:' + r.color + '"></span>' + esc(r.id) + "</td>" +
+        '<td class="muted-cell">' + r.arrival + "</td>" +
+        "<td>" + r.burst + "</td>" +
+        "<td>" + r.first + "</td>" +
+        "<td>" + r.ct + "</td>" +
+        "<td>" + r.tat + "</td>" +
+        "<td>" + r.wt + "</td>" +
+        "<td>" + r.rt + "</td>" +
+      "</tr>";
+    });
+    html += '<tr style="background:#fbfcff">' +
+      '<td style="color:var(--muted);font-weight:650">Orta</td>' +
+      '<td class="muted-cell">—</td><td class="muted-cell">—</td><td class="muted-cell">—</td><td class="muted-cell">—</td>' +
+      '<td style="font-weight:650">' + fmt(result.avgTat) + "</td>" +
+      '<td style="font-weight:650">' + fmt(result.avgWt) + "</td>" +
+      '<td style="font-weight:650">' + fmt(result.avgRt) + "</td>" +
+    "</tr>";
+    body.innerHTML = html;
+  }
+
+  function renderComparison(procs, quantum) {
+    const body = $("cmpBody");
+    if (!procs.length) {
+      body.innerHTML = '<tr><td colspan="5" class="muted-cell" style="text-align:center;padding:22px 10px">Müqayisə üçün prosesləri daxil edin.</td></tr>';
+      return;
+    }
+    const q = isInt(quantum) && quantum > 0 ? quantum : 2;
+    const items = Object.keys(ALGS).map((key) => {
+      const segs = buildSchedule(key, procs, q);
+      const m = computeMetrics(procs, segs);
+      return { key: key, wt: m.avgWt, tat: m.avgTat, rt: m.avgRt };
+    });
+    const best = Math.min.apply(null, items.map((x) => x.wt));
+    const maxWt = Math.max.apply(null, items.map((x) => x.wt)) || 1;
+
+    body.innerHTML = items.map((x) => {
+      const isBest = Math.abs(x.wt - best) < 1e-9;
+      const barW = Math.max(2, (x.wt / maxWt) * 100);
+      return '<tr data-cmp-alg="' + x.key + '"' + (isBest ? ' class="best-row"' : "") + ' style="cursor:pointer" title="Bu alqoritmlə hesabla">' +
+        "<td>" + ALGS[x.key].label + (isBest ? ' <span class="pill">ən yaxşı</span>' : "") + "</td>" +
+        "<td>" + fmt(x.wt) + "</td>" +
+        "<td>" + fmt(x.tat) + "</td>" +
+        "<td>" + fmt(x.rt) + "</td>" +
+        '<td><div class="bar"><i style="width:' + barW.toFixed(1) + '%"></i></div></td>' +
+      "</tr>";
+    }).join("");
+  }
+
+  /* ---------------- messages ---------------- */
+
+  function showMsg(text) {
+    $("msgText").textContent = text;
+    $("msg").className = "msg show err";
+  }
+
+  function hideMsg() {
+    $("msg").className = "msg";
+  }
+
+  /* ---------------- algorithm ui ---------------- */
+
+  function updateQuantumVisibility() {
+    $("quantumField").classList.toggle("hidden", state.algorithm !== "rr");
+  }
+
+  function selectAlgorithm(key) {
+    if (!ALGS[key]) return;
+    state.algorithm = key;
+    const radio = document.querySelector('input[name="alg"][value="' + key + '"]');
+    if (radio) radio.checked = true;
+    updateQuantumVisibility();
+  }
+
+  /* ---------------- playback ---------------- */
+
+  function setPlayButton(playing) {
+    $("playBtn").innerHTML = playing
+      ? '<svg width="13" height="13"><use href="#i-pause"/></svg>Dayandır'
+      : '<svg width="13" height="13"><use href="#i-play"/></svg>Addım-addım';
+  }
+
+  function stopPlayback() {
+    if (state.timer) {
+      clearInterval(state.timer);
+      state.timer = null;
+    }
+    state.playing = false;
+    setPlayButton(false);
+  }
+
+  function finishPlayback() {
+    stopPlayback();
+    if (state.result) {
+      state.revealed = state.result.segments.length;
+      renderGantt(state.result, null, null);
+      $("playStatus").textContent = "Simulyasiya tamamlandı · " + state.result.segments.length + " seqment";
+    }
+  }
+
+  function tick() {
+    if (!state.result || !state.playing) return;
+    if (state.revealed >= state.result.segments.length) {
+      finishPlayback();
+      return;
+    }
+    state.revealed += 1;
+    const seg = state.result.segments[state.revealed - 1];
+    renderGantt(state.result, state.revealed, state.revealed - 1);
+    $("playStatus").innerHTML = seg.pid
+      ? "<b>" + esc(seg.pid) + "</b> icra olunur · " + seg.start + " – " + seg.end
+      : "Prosessor boşdur · " + seg.start + " – " + seg.end;
+    if (state.revealed >= state.result.segments.length) finishPlayback();
+  }
+
+  function togglePlayback() {
+    if (!state.result) return;
+    if (state.playing) {
+      stopPlayback();
+      $("playStatus").textContent = "Dayandırıldı";
+      return;
+    }
+    state.playing = true;
+    state.revealed = 0;
+    setPlayButton(true);
+    renderGantt(state.result, 0, null);
+    tick();
+    state.timer = setInterval(tick, Number($("speed").value));
+  }
+
+  /* ---------------- run ---------------- */
+
+  function run() {
+    hideMsg();
+    stopPlayback();
+
+    const procs = readProcs();
+    const quantum = Number($("quantum").value);
+    state.quantum = quantum;
+
+    const err = validate(procs, quantum);
+    if (err) {
+      showMsg(err);
+      $("playStatus").textContent = "Girişdə xəta";
+      return;
+    }
+
+    const segs = buildSchedule(state.algorithm, procs, quantum);
+    const result = computeMetrics(procs, segs);
+    state.result = result;
+    state.revealed = segs.length;
+
+    renderGantt(result, null, null);
+    renderOrder(result);
+    renderMetrics(result);
+    renderSummary(result);
+    renderComparison(procs, quantum);
+
+    $("algLabel").textContent = ALGS[state.algorithm].label;
+    $("playBtn").disabled = false;
+    $("playStatus").textContent = segs.length + " seqment · hesablandı";
+  }
+
+  /* ---------------- preset ---------------- */
+
+  function loadPreset(key, doRun) {
+    const p = PRESETS[key];
+    if (!p) return;
+    state.procs = p.procs.map((r) => ({ id: r[0], arrival: r[1], burst: r[2], priority: r[3] }));
+    state.quantum = p.quantum;
+    $("quantum").value = p.quantum;
+    selectAlgorithm(p.alg);
+    renderTable();
+    if (doRun) run();
+  }
+
+  /* ---------------- events ---------------- */
+
+  function syncField(inp) {
+    const tr = inp.closest("tr[data-idx]");
+    if (!tr) return;
+    const idx = Number(tr.dataset.idx);
+    const p = state.procs[idx];
+    if (!p) return;
+    p[inp.dataset.field] = inp.value;
+  }
+
+  $("procBody").addEventListener("input", (e) => {
+    if (e.target.matches("input[data-field]")) syncField(e.target);
+  });
+
+  $("procBody").addEventListener("change", (e) => {
+    if (e.target.matches("input[data-field]")) {
+      syncField(e.target);
+      run();
+    }
+  });
+
+  $("procBody").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-del]");
+    if (!btn) return;
+    state.procs.splice(Number(btn.dataset.del), 1);
+    renderTable();
+    run();
+  });
+
+  $("addProc").addEventListener("click", () => {
+    state.procs.push({ id: nextId(), arrival: 0, burst: 4, priority: 1 });
+    renderTable();
+    const rows = $("procBody").querySelectorAll("tr");
+    const last = rows[rows.length - 1];
+    if (last) {
+      const idInput = last.querySelector('input[data-field="id"]');
+      if (idInput) { idInput.focus(); idInput.select(); }
+    }
+    run();
+  });
+
+  $("runBtn").addEventListener("click", run);
+  $("playBtn").addEventListener("click", togglePlayback);
+  $("printBtn").addEventListener("click", () => window.print());
+
+  $("resetBtn").addEventListener("click", () => {
+    const map = { fcfs: "fcfs", sjf: "sjf", srtf: "srtf", prio: "prio", priop: "prio", rr: "rr" };
+    hideMsg();
+    loadPreset(map[state.algorithm] || "fcfs", true);
+  });
+
+  document.querySelectorAll('input[name="alg"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      if (!radio.checked) return;
+      state.algorithm = radio.value;
+      updateQuantumVisibility();
+      run();
+    });
+  });
+
+  $("quantum").addEventListener("input", () => {
+    state.quantum = Number($("quantum").value);
+  });
+  $("quantum").addEventListener("change", run);
+
+  $("speed").addEventListener("change", () => {
+    if (!state.playing) return;
+    if (state.timer) clearInterval(state.timer);
+    state.timer = setInterval(tick, Number($("speed").value));
+  });
+
+  $("presets").addEventListener("click", (e) => {
+    const chip = e.target.closest("[data-preset]");
+    if (!chip) return;
+    hideMsg();
+    loadPreset(chip.dataset.preset, true);
+  });
+
+  $("cmpBody").addEventListener("click", (e) => {
+    const row = e.target.closest("tr[data-cmp-alg]");
+    if (!row) return;
+    selectAlgorithm(row.dataset.cmpAlg);
+    run();
+  });
+
+  /* ---------------- onboarding turu ---------------- */
+
+  const TOUR = [
+    {
+      target: "#algGrid", place: "right",
+      title: "Alqoritmi seçin",
+      text: "FCFS, SJF, SRTF, Prioritet (preemptive və qeyri-preemptive) və Round Robin. Round Robin seçiləndə vaxt kvantı sahəsi görünür."
+    },
+    {
+      target: "#procBody", place: "right",
+      title: "Prosesləri daxil edin",
+      text: "Hər proses üçün ad, gəlmə vaxtı, burst vaxtı və prioritet. «Proses əlavə et» ilə yeni sətir, zibil qutusu ilə silmə."
+    },
+    {
+      target: "#presets", place: "right",
+      title: "Mühazirə nümunələri",
+      text: "Dərs 8-dəki hazır nümunələri bir kliklə yükləyin: FCFS, SJF, SRTF, Prioritet və Round Robin."
+    },
+    {
+      target: "#runBtn", place: "right",
+      title: "Simulyasiya et",
+      text: "Seçilmiş alqoritm üzrə icra qrafikini və bütün vaxt göstəricilərini hesablayır. Dəyərləri dəyişəndə nəticə avtomatik yenilənir."
+    },
+    {
+      target: "#summaryRow", place: "bottom",
+      title: "Xülasə göstəriciləri",
+      text: "Orta gözləmə (WT), dövriyyə (TAT) və cavab (RT) vaxtları, həmçinin CPU məşğulluğu faizi."
+    },
+    {
+      target: "#ganttCard", place: "bottom",
+      title: "İcra qrafiki (Gantt diaqramı)",
+      text: "Hansı prosesin hansı zaman aralığında icra olunduğunu göstərir. «Addım-addım» düyməsi və sürət seçimi ilə icranı tək-tək izləyin."
+    },
+    {
+      target: "#orderCard", place: "bottom",
+      title: "İcra sırası",
+      text: "Prosessora verilən proseslərin ardıcıllığı və vaxt aralıqları. Prosessorun boş qaldığı anlar da burada görünür."
+    },
+    {
+      target: "#metricsCard", place: "bottom",
+      title: "Proses göstəriciləri",
+      text: "Hər proses üçün başlama, tamamlanma, dövriyyə, gözləmə və cavab vaxtı; sonuncu sətirdə orta dəyərlər."
+    },
+    {
+      target: "#cmpCard", place: "bottom",
+      title: "Alqoritmlərin müqayisəsi",
+      text: "Eyni proseslər üzərində bütün alqoritmlərin orta nəticələri və ən yaxşısı. Sətrə klikləyərək həmin alqoritmlə hesablayın."
+    },
+    {
+      target: "#tourStart", place: "bottom",
+      title: "Turu yenidən izləyin",
+      text: "İstənilən vaxt yuxarıdaki «Turu izlə» düyməsi ilə bu bələdçini təkrar aça bilərsiniz."
+    }
+  ];
+
+  const tourRoot = $("tourRoot");
+  const tourTip = $("tourTip");
+  const tourHole = $("tourHole");
+  const tourArrow = $("tourArrow");
+  let tourIndex = 0;
+  let tourRaf = 0;
+  let prevOverflow = "";
+
+  function tourActive() {
+    return tourRoot.classList.contains("on");
+  }
+
+  function buildTourDots() {
+    $("tourDots").innerHTML = TOUR.map((s, i) =>
+      '<button class="tour-dot" type="button" data-dot="' + i + '" aria-label="Addım ' + (i + 1) + '"></button>'
+    ).join("");
+  }
+
+  function syncTourDots() {
+    $("tourDots").querySelectorAll("[data-dot]").forEach((d, i) => {
+      d.classList.toggle("on", i === tourIndex);
+    });
+  }
+
+  function placeTourTip(rect, pad, pref) {
+    tourTip.style.visibility = "hidden";
+
+    const tw = tourTip.offsetWidth;
+    const th = tourTip.offsetHeight;
+    const gap = 16;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const spots = {
+      bottom: { x: rect.left + rect.width / 2 - tw / 2, y: rect.bottom + pad + gap, place: "bottom" },
+      top: { x: rect.left + rect.width / 2 - tw / 2, y: rect.top - pad - gap - th, place: "top" },
+      right: { x: rect.right + pad + gap, y: rect.top + rect.height / 2 - th / 2, place: "right" },
+      left: { x: rect.left - pad - gap - tw, y: rect.top + rect.height / 2 - th / 2, place: "left" }
+    };
+
+    const order = pref && spots[pref] ? [pref, "bottom", "top", "right", "left"] : ["bottom", "top", "right", "left"];
+    let chosen = null;
+    for (const key of order) {
+      const s = spots[key];
+      if (!s) continue;
+      if (s.x >= 12 && s.y >= 12 && s.x + tw <= vw - 12 && s.y + th <= vh - 12) { chosen = s; break; }
+    }
+    if (!chosen) {
+      chosen = { x: spots.bottom.x, y: spots.bottom.y, place: "bottom" };
+      chosen.x = Math.min(Math.max(12, chosen.x), Math.max(12, vw - tw - 12));
+      chosen.y = Math.min(Math.max(12, chosen.y), Math.max(12, vh - th - 12));
+    }
+
+    tourTip.style.left = chosen.x + "px";
+    tourTip.style.top = chosen.y + "px";
+    tourTip.style.visibility = "visible";
+
+    if (chosen.place === "bottom" || chosen.place === "top") {
+      const cx = rect.left + rect.width / 2;
+      tourArrow.style.left = Math.min(Math.max(14, cx - chosen.x - 6), Math.max(14, tw - 26)) + "px";
+      tourArrow.style.top = (chosen.place === "bottom" ? -6 : th - 6) + "px";
+    } else {
+      const cy = rect.top + rect.height / 2;
+      tourArrow.style.top = Math.min(Math.max(14, cy - chosen.y - 6), Math.max(14, th - 26)) + "px";
+      tourArrow.style.left = (chosen.place === "right" ? -6 : tw - 6) + "px";
+    }
+  }
+
+  function paintTourStep() {
+    const step = TOUR[tourIndex];
+    if (!step) return;
+    const el = document.querySelector(step.target);
+    if (!el) return;
+    const r0 = el.getBoundingClientRect();
+    if (r0.top < 10 || r0.bottom > window.innerHeight - 10) {
+      el.scrollIntoView({ block: "center", inline: "nearest" });
+    }
+    const rect = el.getBoundingClientRect();
+    const pad = 8;
+    tourHole.style.left = (rect.left - pad) + "px";
+    tourHole.style.top = (rect.top - pad) + "px";
+    tourHole.style.width = (rect.width + pad * 2) + "px";
+    tourHole.style.height = (rect.height + pad * 2) + "px";
+    placeTourTip(rect, pad, step.place);
+  }
+
+  function showTourStep(i) {
+    if (!tourActive()) return;
+    if (i < 0 || i >= TOUR.length) { endTour(); return; }
+    if (!document.querySelector(TOUR[i].target)) { showTourStep(i + 1); return; }
+
+    tourIndex = i;
+    const step = TOUR[i];
+    $("tourTitle").textContent = step.title;
+    $("tourText").textContent = step.text;
+    $("tourCount").textContent = "Addım " + (i + 1) + " / " + TOUR.length;
+    $("tourNext").textContent = i === TOUR.length - 1 ? "Bitir" : "İleri";
+    $("tourPrev").disabled = i === 0;
+    syncTourDots();
+    paintTourStep();
+  }
+
+  function startTour() {
+    tourIndex = 0;
+    prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    tourRoot.classList.add("on");
+    tourRoot.setAttribute("aria-hidden", "false");
+    showTourStep(0);
+    $("tourNext").focus();
+  }
+
+  function endTour() {
+    tourRoot.classList.remove("on");
+    tourRoot.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = prevOverflow;
+    try {
+      window.localStorage.setItem("cpuSimTourSeen", "1");
+    } catch (e) {
+      /* localStorage əlçatan deyilsə, tur növbəti açılışda yenidən göstəriləcək */
+    }
+    if ($("tourStart")) $("tourStart").focus();
+  }
+
+  function tourNext() {
+    if (tourIndex >= TOUR.length - 1) endTour();
+    else showTourStep(tourIndex + 1);
+  }
+
+  function tourPrev() {
+    if (tourIndex > 0) showTourStep(tourIndex - 1);
+  }
+
+  window.addEventListener("resize", () => {
+    if (!tourActive()) return;
+    cancelAnimationFrame(tourRaf);
+    tourRaf = requestAnimationFrame(() => {
+      paintTourStep();
+      const step = TOUR[tourIndex];
+      const el = step && document.querySelector(step.target);
+      if (el) placeTourTip(el.getBoundingClientRect(), 8, step.place);
+    });
+  });
+
+  /* ---------------- init ---------------- */
+
+  loadPreset("fcfs", false);
+  run();
+
+  /* onboarding */
+  buildTourDots();
+  $("tourStart").addEventListener("click", () => { if (!tourActive()) startTour(); });
+  $("tourClose").addEventListener("click", endTour);
+  $("tourNext").addEventListener("click", tourNext);
+  $("tourPrev").addEventListener("click", tourPrev);
+  $("tourDots").addEventListener("click", (e) => {
+    const dot = e.target.closest("[data-dot]");
+    if (dot) showTourStep(Number(dot.dataset.dot));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!tourActive()) return;
+    if (e.key === "Escape") endTour();
+    else if (e.key === "ArrowRight") { e.preventDefault(); tourNext(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); tourPrev(); }
+  });
+
+  let tourSeen = false;
+  try {
+    tourSeen = window.localStorage.getItem("cpuSimTourSeen") === "1";
+  } catch (e) {
+    tourSeen = false;
+  }
+  if (!tourSeen) window.setTimeout(startTour, 800);
+
+})();
+
+</script>
+
+</body>
+</html>
